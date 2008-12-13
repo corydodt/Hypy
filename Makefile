@@ -1,2 +1,8 @@
-docs:
-	pydoctor --add-package hypy --project-name="Hypy" --project-url="http://goonmill.org/hypy/" --make-html --html-writer=hypy.nevowhtml.CoryWriter
+
+DNOTIFY=dnotify -q1 -a
+
+start:
+	hg serve --daemon --port 28090 --pid-file hgserve.pid
+
+stop:
+	kill `cat hgserve.pid`
