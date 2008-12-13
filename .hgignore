@@ -5,3 +5,4 @@ apidocs/.*
 _trial_temp/.*
 casket/.*
 build/.*
+PKG-INFO
