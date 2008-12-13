@@ -1,5 +1,6 @@
 1. Add 'contributing' section to README
-2. Install README and docs on goonmill.org/hypy/
-3. Try to get 100% coverage on tests.
-4. Use a unicode wrapper on functions
-5. Python 3.0 compat
+2. Set up hosted Hypy repo on engraver; dev wiki page update
+3. Install README and docs on goonmill.org/hypy/
+4. Try to get 100% coverage on tests.
+5. Use a unicode wrapper on functions
+6. Python 3.0 compat
