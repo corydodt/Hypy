@@ -2,7 +2,16 @@
 Hypy
 ====
 
+.. sidebar:: Download
+
+    If you just want to download the latest source RIGHT now, use:
+    http://hypy-source.goonmill.org/archive/tip.tar.gz
+
 .. image:: /static/hypylogo.png
+
+.. sidebar:: Docs
+
+    Reference (API) documentation lives at: http://goonmill.org/hypy/apidocs/
 
 Hypy is a fulltext search interface for Python applications.  Use it to index
 and search your documents from Python code.
@@ -22,11 +31,6 @@ easiest way to install the software if you are an Ubuntu user.
 
 Installation
 ~~~~~~~~~~~~
-.. sidebar:: Downloading
-
-    If you just want to download the source RIGHT RIGHT NOW, try:
-    http://hypy-source.goonmill.org/archive/tip.tar.gz
-
 
 I. easy_install method
 ======================
