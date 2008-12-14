@@ -47,6 +47,7 @@ You can get an instant "oh I get it!" fix by looking inside the "examples"
 directory distributed with this software.
 
 - gather.py demonstrates how to index documents into a collection
+
 - search.py demonstrates how to search for documents in an existing collection
 
 
@@ -59,7 +60,7 @@ like attribute comparisons, max and skip searches, etc.
 
 Reference Documentation
 ~~~~~~~~~~~~~~~~~~~~~~~
-`http://goonmill.org/hypy/apidocs/`
+http://goonmill.org/hypy/apidocs/
 
 
 Read This! - Unicode
@@ -68,17 +69,21 @@ To make the transition to Python 3.0 easier, and because it is a good idea,
 Hypy requires Unicode objects in all of its APIs.
 
 WRONG:
->>> d = HDocument(uri='http://pinatas.com/store.html') # byte string!
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-  File "/usr/lib/python2.5/site-pacakges/hypy/lib.py", line 291, in __init__
-    raise TypeError("Must provide uri as unicode text")
-TypeError: Must provide uri as unicode text
+::
+
+  >>> d = HDocument(uri='http://pinatas.com/store.html') # byte string!
+  Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+    File "/usr/lib/python2.5/site-pacakges/hypy/lib.py", line 291, in __init__
+      raise TypeError("Must provide uri as unicode text")
+  TypeError: Must provide uri as unicode text
 
 RIGHT:
->>> d = HDocument(uri=u'http://pinatas.com/store.html') # unicode :-)
-
->>> d[u'@title'] = u'Pinata Store'  # attributes are also unicode
+::
+ 
+  >>> d = HDocument(uri=u'http://pinatas.com/store.html') # unicode :-)
+ 
+  >>> d[u'@title'] = u'Piñata Store'  # attributes are also unicode
 
 Because of this change, and some other minor, Python-enhancing differences
 between the APIs, I have deliberately renamed all the classes and methods
@@ -102,4 +107,5 @@ LGPL 2.1
 
 
 Hypy (c) Cory Dodt, 2008.
+
 estraiernative (c) Yusuke Yoshida.
