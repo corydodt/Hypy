@@ -82,13 +82,13 @@ RIGHT:
 ::
  
   >>> d = HDocument(uri=u'http://pinatas.com/store.html') # unicode :-)
- 
-  >>> d[u'@title'] = u'Piñata Store'  # attributes are also unicode
+  >>> d.addText(u'Ol')
+  >>> d[u'@title'] = u'Piata Store'  # attributes are also unicode
 
 Because of this change, and some other minor, Python-enhancing differences
 between the APIs, I have deliberately renamed all the classes and methods
-supported by Hypy to prevent confusion.  If you know Python and are already
-familiar with Hyper Estraier, you will probably want to visit the reference
+supported by Hypy, to prevent confusion.  If you know Python and are already
+familiar with Hyper Estraier, you should now visit the Hypy reference
 documentation to learn the new names of functions.  In general, though,
 "est_someclass_foo_bar" takes a byte string in Hyper Estraier, but becomes
 "HSomeClass.fooBar" in Hypy and takes Unicode text.
@@ -96,15 +96,27 @@ documentation to learn the new names of functions.  In general, though,
 
 What's not Supported in Hypy vs. Hyper Estraier
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Hyper Estraier supports a version of federated search which are supported by
-APIs such as merge, search_meta and eclipse.  If I hear a compelling use case
-or receive patches with unit tests, I may add support for these APIs.
+Hyper Estraier implements a version of federated search which is supported by
+its APIs such as merge, search_meta and eclipse.  If I hear a compelling use case
+or receive patches with unit tests, I may add support for these APIs.  This is
+not a hard thing to do, I just have no use for it myself, so I am reluctant to
+promise to maintain it unless someone else really needs it.
+
+
+Contributing and Reporting Bugs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Hypy's bug tracker on Launchpad is: `https://bugs.launchpad.net/hypy`
+
+For more information on contributing, including the URL of the source
+repository for Hypy, go to: `http://wiki.goonmill.org/DevelopmentCentral`
+
+It bears emphasizing that BUGS WITH REPRODUCIBLE STEPS, PATCHES AND UNIT TESTS
+(in that order) GET FIXED SOONER.
 
 
 License
 ~~~~~~~
 LGPL 2.1
-
 
 Hypy (c) Cory Dodt, 2008.
 
