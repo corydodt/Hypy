@@ -50,6 +50,8 @@ class TestHDocument(unittest.TestCase):
         self.assertEqual(sorted(doc.keys()), [u'@uri', u'foobar', u'new1', u'ninjas', ])
         self.assertEqual(sorted(doc.values()), [u'1', u'11', u'bazz', u'lala'])
 
+        self.assertRaises(NotImplementedError, doc.__delitem__, u'ninjas')
+
     def test_text(self):
         """
         Mess with document text
@@ -65,6 +67,12 @@ class TestHDocument(unittest.TestCase):
         self.assertEqual([u'xyz', u'123'], doc.getTexts())
 
         self.assertEqual(u'xyz\n123', doc.text)
+
+    def test_unicodeType(self):
+        """
+        Almost everything in hypy must be unicode
+        """
+        self.assertRaises(TypeError, HDocument, uri='notunicode')
 
 
 class TestDatabase(unittest.TestCase):
@@ -123,6 +131,7 @@ class TestDatabase(unittest.TestCase):
             db.optimize(opt=True)
         with self.freshenDatabase() as db:
             db.optimize()
+            self.assertRaises(NotImplementedError, db.sync)
 
     def test_removeUpdate(self):
         """
@@ -133,6 +142,10 @@ class TestDatabase(unittest.TestCase):
 
         # id of a non-stored document
         self.assertEqual(docxx.id, -1)
+
+        # updateAttributes on opened db?
+        db = HDatabase()
+        self.assertRaises(EditFailed, db.updateAttributes, docxx)
 
         # removes and updates
         with self.freshenDatabase() as db:
@@ -161,6 +174,8 @@ class TestDatabase(unittest.TestCase):
             self.assertRaises(TypeError, db.remove)
             # already removed?
             self.assertRaises(EditFailed, db.remove, id=doc3id)
+
+            self.assertRaises(KeyError, db.__getitem__, '1')
 
             # fetch a document from the database, edit it, store it, compare
             # it with the original (unfetched) document.  Verify that they are
@@ -217,16 +232,37 @@ class TestDatabase(unittest.TestCase):
             result = db.search(HCondition('ipsum score', matching='union'))
             self.assertEqual(len(result), 2)
 
+            # isect matching
+            result = db.search(HCondition('lorem* ipsum*', matching='simple'))
+            self.assertEqual(len(result), 1)
+            result = db.search(HCondition('lorem* ipsum*', matching='isect'))
+            self.assertEqual(len(result), 0)
+            result = db.search(HCondition('lorem ipsum', matching='isect'))
+            self.assertEqual(len(result), 1)
+
+            # rough matching
+            result = db.search(HCondition('lorem* ipsum*', matching='simple'))
+            self.assertEqual(len(result), 1)
+            result = db.search(HCondition('lorem* ipsum*', matching='rough'))
+            self.assertEqual(len(result), 0)
+            result = db.search(HCondition('lorem ipsum', matching='rough'))
+            self.assertEqual(len(result), 1)
+
+
             # fewer-than-max hits
             result = db.search(HCondition('7*', matching='simple', max=2))
             self.assertEqual(len(result), 1)
             self.assertEqual(result[0][u'@uri'], u'3')
 
             # attribute conditions
+            cc = HCondition(u'*.**')
+            self.assertRaises(TypeError, cc.addAttr, 'xxx')
+
             def attrSearch(expr, order=None):
                 cond = HCondition(u'*.**') # regular expression match, all characters
                 cond.addAttr(expr)
                 if order:
+                    self.assertRaises(TypeError, cond.setOrder, '*.**')
                     cond.setOrder(order)
                 return db.search(cond)
             result = attrSearch(u'description STREQ 4444')
@@ -288,6 +324,7 @@ class TestDatabase(unittest.TestCase):
 
         # close after successful close
         self.assertRaises(CloseFailed, db.close)
+        self.assertRaises(FlushFailed, db.flush)
 
     def test_queries(self):
         """
@@ -311,6 +348,53 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(result.pluck(u'@uri'), [u'2', u'3'])
             result = db.search(HCondition('someth* | upon*', matching='simple', max=2))
             self.assertEqual(result.pluck(u'@uri'), [u'3', u'2']) # FIXME
+
+            self.assertEqual(result.hintWords(), [u'someth', u'upon'])
+
+    def test_hits(self):
+        """
+        Poke at the hits returned by a search and see if document data and
+        teaser text come out right.
+        """
+        with self.freshenDatabase() as db:
+            cc = HCondition(u'hi-res')
+            for hit in db.search(cc):
+                self.assertEqual(str(hit), 
+'@digest=17de33c57e358f0fc5d57cd26a08b48e\n@id=1\n@uri=1\n\nword this is my document. do you like documents? this one is hi-res.\n')
+                self.assertEqual(hit.teaser([u'document']), u'word this is my <strong>document</strong>. do you li ... ke <strong>document</strong>s? this one is hi-re ... ')
+                self.assertRaises(TypeError, hit.teaser, ['document'])
+                self.assertRaises(NotImplementedError, hit.teaser, 
+                        [u'document'], 'rst')
+
+    def test_autoflush(self):
+        """
+        Verify that autoflush is not on when it's not turned on, and that
+        words are autoindexed when it is turned on
+        """
+        cond = HCondition(u'doc*')
+
+        @contextmanager
+        def setup(**kw):
+            db1 = HDatabase(**kw)
+            db1.open('_temp_db', 'w')
+
+            doc = HDocument(uri=u'1')
+            doc.addText(u'word this is my document. do you like documents? this one is hi-res.')
+            db1.putDoc(doc, clean=True)
+
+            try:
+                yield db1
+            finally:
+                db1.close()
+
+        # non-autoflush: can't search for doc*
+        with setup() as db:
+            self.assertEqual(len(db.search(cond)), 0)
+
+        # autoflush: now you can.
+        with setup(autoflush=True) as db:
+            self.assertEqual(len(db.search(cond)), 1)
+
 
 if __name__ == '__main__':
     unittest.main()
