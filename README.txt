@@ -4,14 +4,14 @@ Hypy
 
 .. sidebar:: Download
 
-    If you just want to download the latest source RIGHT now, use:
-    http://hypy-source.goonmill.org/archive/tip.tar.gz
+    Download the `latest source
+    <http://hypy-source.goonmill.org/archive/tip.tar.gz>`_
 
 .. image:: /static/hypylogo.png
 
 .. sidebar:: Docs
 
-    Reference (API) documentation lives at: http://goonmill.org/hypy/apidocs/
+    `Reference (API) documentation <http://goonmill.org/hypy/apidocs/>`_
 
 Hypy is a fulltext search interface for Python applications.  Use it to index
 and search your documents from Python code.
@@ -83,7 +83,7 @@ Read This! - Unicode
 To make the transition to Python 3.0 easier, and because it is a good idea,
 Hypy requires Unicode objects in all of its APIs.
 
-WRONG:
+*WRONG*
 ::
 
   >>> d = HDocument(uri='http://pinatas.com/store.html') # byte string!
@@ -93,7 +93,7 @@ WRONG:
       raise TypeError("Must provide uri as unicode text")
   TypeError: Must provide uri as unicode text
 
-RIGHT:
+*RIGHT*
 ::
  
   >>> d = HDocument(uri=u'http://pinatas.com/store.html') # unicode :-)
@@ -120,10 +120,13 @@ promise to maintain it unless someone else really needs it.
 
 Contributing and Reporting Bugs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Hypy's bug tracker on Launchpad is: https://bugs.launchpad.net/hypy
+Hypy has a `bug tracker <https://bugs.launchpad.net/hypy>`_ on Launchpad.
 
 For more information on contributing, including the URL of the source
-repository for Hypy, go to: http://wiki.goonmill.org/DevelopmentCentral
+repository for Hypy, go to `DevelopmentCentral
+<http://wiki.goonmill.org/DevelopmentCentral>`_ on the wiki_.
+
+.. _wiki: http://wiki.goonmill.org/
 
 It bears emphasizing that **bugs with reproducible steps, patches and unit
 tests** (in that order) **get fixed sooner**.

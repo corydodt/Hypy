@@ -6,7 +6,8 @@ stop:
 	kill `cat hgserve.pid`
 
 website:
-	rst2html README.txt /var/www/goonmill.org/hypy/index.tsw
+	rst2html --stylesheet-path=docutils.css README.txt \
+		/var/www/goonmill.org/hypy/index.tsw
 	pydoctor --add-package hypy --project-name="Hypy" \
 		--project-url="http://goonmill.org/hypy/" \
 		--make-html \
