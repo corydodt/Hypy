@@ -17,3 +17,6 @@ website:
 	cd /var/www/goonmill.org/hypy/apidocs; for f in *.tsw; do \
 		sed -r -i 's/href="([.a-zA-Z_-]*?)\.html/href="\1.tsw/g' $$f; done
 	cp apidocs.css /var/www/goonmill.org/hypy/apidocs/
+
+tests:
+	python -m hypy.test_lib

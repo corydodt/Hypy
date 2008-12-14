@@ -64,6 +64,8 @@ class TestHDocument(unittest.TestCase):
         doc.addHiddenText(u'abc')
         self.assertEqual([u'xyz', u'123'], doc.getTexts())
 
+        self.assertEqual(u'xyz\n123', doc.text)
+
 
 class TestDatabase(unittest.TestCase):
     """
@@ -310,3 +312,5 @@ class TestDatabase(unittest.TestCase):
             result = db.search(HCondition('someth* | upon*', matching='simple', max=2))
             self.assertEqual(result.pluck(u'@uri'), [u'3', u'2']) # FIXME
 
+if __name__ == '__main__':
+    unittest.main()

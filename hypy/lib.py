@@ -384,6 +384,10 @@ class HDocument(object):
         """
         return map(lambda t: t.decode('utf-8'), self._cdoc.texts())
 
+    def _get_text(self):
+        return u'\n'.join(self.getTexts())
+    text = property(_get_text)
+
     def _get_id(self):
         return self._cdoc.id()
     id = property(_get_id)
