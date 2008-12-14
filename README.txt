@@ -51,6 +51,9 @@ You may also build the dependencies from source.  They are:
   python-dev)
 
 Then just run "python setup.py build; sudo python setup.py install".
+
+Optionally, run 'make tests' in the source directory to see the unit tests
+run.
  
 
 Quick Launch
