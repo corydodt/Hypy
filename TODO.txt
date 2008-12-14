@@ -1,5 +1,3 @@
-1. Make .text a property of HDocument; getTexts should be an implementation
-   detail
 2. Try to get 100% coverage on tests.
 3. Use a unicode wrapper on functions
 4. Launch on pypi
