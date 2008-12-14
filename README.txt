@@ -82,8 +82,8 @@ RIGHT:
 ::
  
   >>> d = HDocument(uri=u'http://pinatas.com/store.html') # unicode :-)
-  >>> d.addText(u'Ol')
-  >>> d[u'@title'] = u'Piata Store'  # attributes are also unicode
+  >>> d.addText(u'Olé')
+  >>> d[u'@title'] = u'Piñata Store'  # attributes are also unicode
 
 Because of this change, and some other minor, Python-enhancing differences
 between the APIs, I have deliberately renamed all the classes and methods
