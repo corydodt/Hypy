@@ -1,4 +1,3 @@
-2. Try to get 100% coverage on tests.
 3. Use a unicode wrapper on functions
 4. Launch on pypi
 5. Announce on freshmeat, launchpad etc.

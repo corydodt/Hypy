@@ -88,7 +88,7 @@ class HCondition(object):
         Use 'expression' to filter results by attributes
         """
         if not type(expression) is unicode:
-            raise KeyError("expression must be unicode text")
+            raise TypeError("expression must be unicode text")
         self.condition.add_attr(expression.encode('utf-8'))
 
     def setOrder(self, expression):
@@ -96,7 +96,7 @@ class HCondition(object):
         Use 'expression' to order results by attributes
         """
         if not type(expression) is unicode:
-            raise KeyError("expression must be unicode text")
+            raise TypeError("expression must be unicode text")
         self.condition.set_order(expression.encode('utf-8'))
 
 
@@ -118,10 +118,9 @@ class HDatabase(object):
     # special file in it that remembers the encoding.  read that file on
     # opening to set an instance variable.  replace all 'utf-8' with
     # self.encoding in database accesses
-    def __init__(self, autoflush=True):
+    def __init__(self, autoflush=False):
         self._cdb = CDatabase()
-        # self.autoflush = autoflush
-        self.autoflush = False # FIXME
+        self.autoflush = autoflush
 
     def putDoc(self, doc, clean=False, weight=False):
         """
@@ -145,7 +144,12 @@ class HDatabase(object):
         """
         Write documents to disk and break them into words
         """
-        if not self._cdb.flush(-1):
+        failed = False
+        try:
+            self._cdb.flush(-1)
+        except CError:
+            failed = True
+        if failed:
             msg = self._cdb.err_msg(self._cdb.error())
             raise FlushFailed(msg)
 
@@ -174,7 +178,12 @@ class HDatabase(object):
         Edit a document's attributes in-place.  Note: there is no way to edit
         the texts.
         """
-        if not self._cdb.edit_doc(doc._cdoc):
+        failed = False
+        try:
+            self._cdb.edit_doc(doc._cdoc)
+        except CError:
+            failed = True
+        if failed:
             msg = self._cdb.err_msg(self._cdb.error())
             raise EditFailed(doc.id, msg)
 
@@ -195,7 +204,7 @@ class HDatabase(object):
         ??? If anyone knows what this should do and how it is different from
         flush(), tell me.
         """
-        raise NotImplemented("I'll implement this when someone tells me what it does")
+        raise NotImplementedError("I'll implement this when someone tells me what it does")
         self._cdb.sync() # TODO - needs a unit test
 
     def open(self, directory, mode):
@@ -228,8 +237,7 @@ class HDatabase(object):
         """
         failed = False
         try:
-            if not self._cdb.close():
-                failed = True
+            self._cdb.close()
         except CError:
             failed = True
         if failed:
@@ -328,7 +336,7 @@ class HDocument(object):
         return self
 
     def __delitem__(self, name):
-        raise NotImplemented("Cannot delete attributes from this document")
+        raise NotImplementedError("Cannot delete attributes from this document")
 
     def __setitem__(self, name, value):
         if not type(name) is type(value) is type(u''):
