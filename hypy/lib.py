@@ -354,7 +354,7 @@ class HDocument(object):
 
 class HHit(HDocument):
     """
-    Dict-like interface to a document
+    A hit returned by a search.
     """
     def teaser(self, terms, format='html'):
         """
