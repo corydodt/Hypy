@@ -1,7 +1,7 @@
 
-==========
-Hypy Intro
-==========
+====
+Hypy
+====
 
 Hypy is a fulltext search interface for Python applications.  Use it to index
 and search your documents from Python code.
@@ -11,6 +11,8 @@ Hypy is based on the estraiernative bindings by Yusuke Yoshida.
 The estraiernative bindings are, in turn, based on Hyper Estraier by Mikio
 Hirabayashi.
 
+README
+------
 
 Installation: Ubuntu Users
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,16 +21,21 @@ easiest way to install the software if you are an Ubuntu user.
 
 Installation
 ~~~~~~~~~~~~
+.. sidebar:: Downloading
+
+    If you just want to download the source RIGHT RIGHT NOW, try:
+    http://hypy-source.goonmill.org/archive/tip.tar.gz
+
 
 I. easy_install method
-----------------------
+======================
 With setuptools (Ubuntu: sudo apt-get install python-setuptools), you can
 install Hypy without even downloading it first by using "sudo easy_install
 hypy".
 
 
 II. source method
------------------
+=================
 You may also build the dependencies from source.  They are:
 
 * hyperestraier runtime (on Ubuntu: sudo apt-get install hyperestraier)
@@ -105,13 +112,13 @@ promise to maintain it unless someone else really needs it.
 
 Contributing and Reporting Bugs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Hypy's bug tracker on Launchpad is: `https://bugs.launchpad.net/hypy`
+Hypy's bug tracker on Launchpad is: https://bugs.launchpad.net/hypy
 
 For more information on contributing, including the URL of the source
-repository for Hypy, go to: `http://wiki.goonmill.org/DevelopmentCentral`
+repository for Hypy, go to: http://wiki.goonmill.org/DevelopmentCentral
 
-It bears emphasizing that BUGS WITH REPRODUCIBLE STEPS, PATCHES AND UNIT TESTS
-(in that order) GET FIXED SOONER.
+It bears emphasizing that **bugs with reproducible steps, patches and unit
+tests** (in that order) **get fixed sooner**.
 
 
 License
