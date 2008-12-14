@@ -5,7 +5,8 @@ Hypy
 .. sidebar:: Download
 
     Download the `latest source
-    <http://hypy-source.goonmill.org/archive/tip.tar.gz>`_
+    <http://hypy-source.goonmill.org/archive/tip.tar.gz>`_, or
+    `browse the source <http://hypy-source.goonmill.org>`_.
 
 .. image:: /static/hypylogo.png
 
