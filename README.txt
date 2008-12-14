@@ -1,7 +1,8 @@
-
 ====
 Hypy
 ====
+
+.. image:: /static/hypylogo.png
 
 Hypy is a fulltext search interface for Python applications.  Use it to index
 and search your documents from Python code.
