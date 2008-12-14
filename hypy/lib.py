@@ -142,6 +142,9 @@ class HDatabase(object):
         return doc
 
     def flush(self):
+        """
+        Write documents to disk and break them into words
+        """
         if not self._cdb.flush(-1):
             msg = self._cdb.err_msg(self._cdb.error())
             raise FlushFailed(msg)
@@ -241,6 +244,9 @@ class HDatabase(object):
         return HResults(self, result)
 
     def walkResult(self, result):
+        """
+        Produce a HHit for each doc in the result
+        """
         count = result.doc_num()
         for i in range(count):
             doc = self._cdb.get_doc(result.get_doc_id(i), 0) # TODO - flags
@@ -293,12 +299,19 @@ class HDocument(object):
         self._cdoc.add_attr('@uri', uri.encode('utf-8'))
 
     def addHiddenText(self, text):
+        """
+        Add text that will affect search scoring but will NOT appear in the
+        output document
+        """
         if not type(text) is type(u''):
             raise TypeError("Must provide unicode text")
         t = text.encode('utf-8')
         self._cdoc.add_hidden_text(t)
 
     def addText(self, text):
+        """
+        Put some text into the document
+        """
         if not type(text) is type(u''):
             raise TypeError("Must provide unicode text")
         t = text.encode('utf-8')
@@ -306,6 +319,10 @@ class HDocument(object):
 
     @classmethod
     def fromCDocument(cls, cdocument):
+        """
+        Construct a document from an existing estraiernative.Document, such as
+        when iterating search results.
+        """
         self = cls(uri=cdocument.attr('@uri').decode('utf8'))
         self._cdoc = cdocument
         return self
@@ -326,25 +343,45 @@ class HDocument(object):
         return self._cdoc.attr(name).decode('utf-8')
 
     def update(self, other):
+        """
+        Update attributes of this document from another one
+        """
         for k, v in other.items():
             self[k] = v
 
     def get(self, key, default=None):
+        """
+        Return doc[key] unless key is not found, in which case return the
+        value of 'default' (None unless specified)
+        """
         try:
             return self[key]
         except KeyError:
             return default
 
     def keys(self):
+        """
+        Names of all attributes set on this document
+        """
         return [n.decode('utf-8') for n in self._cdoc.attr_names()]
 
     def values(self):
+        """
+        Values of all attributes set on this document
+        """
         return [self[a] for a in self.keys()]
 
     def items(self):
+        """
+        (attribute_name, attribute_value) 2-tuples for every attribute in this
+        document
+        """
         return [(a,self[a]) for a in self.keys()]
 
     def getTexts(self):
+        """
+        Return all (visible) texts in this document, as a list
+        """
         return map(lambda t: t.decode('utf-8'), self._cdoc.texts())
 
     def _get_id(self):
