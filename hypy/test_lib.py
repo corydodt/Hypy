@@ -10,7 +10,13 @@ from hypy import (HDocument, HDatabase, HHit, HResults, HCondition, OpenFailed,
         PutFailed, CloseFailed, FlushFailed, EditFailed)
 
 class TestHDocument(unittest.TestCase):
+    """
+    Test the dictionary and text properties of HDocument
+    """
     def setUp(self):
+        """
+        Create a document
+        """
         self.doc = HDocument(uri=u'1')
 
     def test_dictlike(self):
@@ -41,6 +47,9 @@ class TestHDocument(unittest.TestCase):
         self.assertEqual(sorted(doc.values()), [u'1', u'11', u'bazz', u'lala'])
 
     def test_text(self):
+        """
+        Mess with document text
+        """
         doc = self.doc
         self.assertRaises(TypeError, doc.addText, 'xyz')
         doc.addText(u'xyz')
