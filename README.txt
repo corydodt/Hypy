@@ -5,14 +5,17 @@ Hypy
 .. sidebar:: Download
 
     Download the `latest source
-    <http://hypy-source.goonmill.org/archive/tip.tar.gz>`_, or
-    `browse the source <http://hypy-source.goonmill.org>`_.
+    <http://hypy-source.goonmill.org/archive/tip.tar.gz>`_, or `browse the
+    source <http://hypy-source.goonmill.org>`_.  No matter what method you
+    choose to install Hypy, you will have to install `Hyper Estraier`_ first.
+
 
 .. image:: /static/hypylogo.png
 
 .. sidebar:: Docs
 
-    `Reference (API) documentation <http://goonmill.org/hypy/apidocs/>`_
+    `Reference (API) documentation <http://goonmill.org/hypy/apidocs/>`_  See
+    below for more.
 
 Hypy is a fulltext search interface for Python applications.  Use it to index
 and search your documents from Python code.
@@ -34,11 +37,6 @@ Installation
 ~~~~~~~~~~~~
 First things first.  Hypy depends on `Hyper Estraier`_.
 
-.. sidebar:: Hyper Estraier
-
-    No matter what method you choose to install Hypy, you will have to
-    install `Hyper Estraier`_ first.
-
 Source code and a binary installer of Hyper Estraier for Windows can be found at
 the `Hyper Estraier`_ website.
 
@@ -47,15 +45,18 @@ the `Hyper Estraier`_ website.
 Linux users can probably install binary packages using their favorite package
 manager.  You will need these:
 
-* hyperestraier runtime (on Ubuntu: sudo apt-get install hyperestraier)
-* libestraier headers and object code (on Ubuntu: sudo apt-get install
-  libestraier-dev)
-* libqdbm headers and object code (on Ubuntu: sudo apt-get install libqdbm-dev)
-* Python headers and object code, natch (on Ubuntu: sudo apt-get install
-  python-dev)
+* hyperestraier runtime
+* libestraier headers and object code
+* libqdbm headers and object code
+* Python headers and object code, natch
+
+If you are using Ubuntu, you can get all the build dependencies with this command
+::
+
+    sudo apt-get install hyperestraier libestraier-dev libqdbm-dev python-dev
 
 I. easy_install or pip method
-======================
+=============================
 With setuptools (Ubuntu: sudo apt-get install python-setuptools), you can
 install Hypy without even downloading it first by using
 ::
@@ -72,11 +73,11 @@ If you have pip_, you can also use that
 
 II. source method
 =================
-You may also build the dependencies from source.  They are:
+::
 
-Then just run "python setup.py build; sudo python setup.py install".
+    python setup.py build; sudo python setup.py install
 
-Optionally, run 'make tests' in the source directory to see the unit tests
+Optionally, run ``make tests`` in the source directory to see the unit tests
 run.
  
 
@@ -101,7 +102,19 @@ like attribute comparisons, max and skip searches, etc.
 
 Reference Documentation
 ~~~~~~~~~~~~~~~~~~~~~~~
-http://goonmill.org/hypy/apidocs/
+If you can't find what you need in the `API docs`_ you should try one of the
+following:
+
+* The Hyper Estraier `User's Guide`_ describes the search syntax.  You plug
+  this syntax into an instance of ``HCondition`` in Hypy.
+
+* The `Hypy unit tests`_ contain a wealth of examples of search syntax.
+
+.. _User's Guide: http://hyperestraier.sourceforge.net/uguide-en.html#searchcond
+
+.. _Hypy unit tests: http://hypy-source.goonmill.org/file/tip/hypy/test_lib.py
+
+.. _API docs: http://goonmill.org/hypy/apidocs/
 
 
 Read This! - Unicode
