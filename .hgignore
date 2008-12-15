@@ -1,6 +1,5 @@
 (/|\\|^).*\.pyc$
 Hypy.egg-info.*
-hypy/build.*
 apidocs/.*
 _trial_temp/.*
 casket/.*
