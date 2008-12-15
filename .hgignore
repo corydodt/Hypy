@@ -8,3 +8,4 @@ PKG-INFO
 hgserve.pid
 _temp_db/.*
 dist/.*
+changelog.dch
