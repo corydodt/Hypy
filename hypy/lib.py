@@ -1,7 +1,6 @@
 """
 Put a Pythonic face on estraiernative
 """
-
 from _estraiernative import (Condition as CCondition,
     Database as CDatabase, Document as CDocument, EstError as CError)
 
@@ -58,14 +57,41 @@ class CloseFailed(Exception):
         return self.message
 
 
+def enforceUnicode(s, argName, exceptionClass, encoding='utf8'):
+    """
+    Force s to be a unicode object; return a byte string
+    """
+    if not type(s) is unicode:
+        raise exceptionClass('%s must be unicode' % (argName,))
+    return s.encode(encoding)
+
+def unicodeToByte(argSpecs, exceptionClass):
+    """
+    Test each of the argNames to see whether they are unicode text objects.
+    If they are not, raise exceptionClass
+    """
+    def decorator(fn):
+        def wrapper(*a, **kw):
+            a = list(a)
+            for pos, name in argSpecs:
+                if name in kw:
+                    kw[name] = enforceUnicode(kw[name], name, exceptionClass)
+                else:
+                    if len(a) >= pos + 1:
+                        a[pos] = enforceUnicode(a[pos], name, exceptionClass)
+            return fn(*a, **kw)
+        return wrapper
+
+    return decorator
+
+
 class HCondition(object):
     """
     A search condition.
     Use matching='simple', 'rough', 'union' or 'isect'
     """
+    @unicodeToByte([(1,'phrase')], TypeError)
     def __init__(self, phrase, matching='simple', max=None, skip=None):
-        if type(phrase) is unicode:
-            phrase = phrase.encode('utf-8')
         self.condition = CCondition()
         self.condition.set_phrase(phrase)
         if max is not None:
@@ -83,24 +109,19 @@ class HCondition(object):
             flags |= CCondition.ISECT
         self.condition.set_options(flags)
 
+    @unicodeToByte([(1,'expression')], TypeError)
     def addAttr(self, expression):
         """
         Use 'expression' to filter results by attributes
         """
-        if not type(expression) is unicode:
-            raise TypeError("expression must be unicode text")
-        self.condition.add_attr(expression.encode('utf-8'))
+        self.condition.add_attr(expression)
 
+    @unicodeToByte([(1,'expression')], TypeError)
     def setOrder(self, expression):
         """
         Use 'expression' to order results by attributes
         """
-        if not type(expression) is unicode:
-            raise TypeError("expression must be unicode text")
-        self.condition.set_order(expression.encode('utf-8'))
-
-
-# TODO - @unicodeToByte("argname", ...) to require unicode (and decode it)
+        self.condition.set_order(expression)
 
 
 class HDatabase(object):
@@ -153,6 +174,7 @@ class HDatabase(object):
             msg = self._cdb.err_msg(self._cdb.error())
             raise FlushFailed(msg)
 
+    @unicodeToByte([(2,'uri')], TypeError)
     def remove(self, doc=None, uri=None, id=None):
         """
         Take a document out of the database by reference, by uri or by id
@@ -165,7 +187,7 @@ class HDatabase(object):
             id = doc.id
         else:
             if uri is not None:
-                id = self._cdb.uri_to_id(uri.encode('utf-8'))
+                id = self._cdb.uri_to_id(uri)
         if not self._cdb.out_doc(id, flags):
             msg = self._cdb.err_msg(self._cdb.error())
             raise EditFailed(id, msg)
@@ -264,10 +286,8 @@ class HDatabase(object):
 
             yield HHit.fromCDocument(doc)
 
+    @unicodeToByte([(1,'uri')], KeyError)
     def __getitem__(self, uri):
-        if not type(uri) is unicode:
-            raise KeyError("key (uri) must be unicode text")
-        uri = uri.encode('utf8')
         id = self._cdb.uri_to_id(uri)
         return HDocument.fromCDocument(self._cdb.get_doc(id, 0))
 
@@ -300,30 +320,25 @@ class HDocument(object):
     def __str__(self):
         return self._cdoc.dump_draft()
 
+    @unicodeToByte([(1,'uri')], TypeError)
     def __init__(self, uri):
-        if not type(uri) is type(u''):
-            raise TypeError("Must provide uri as unicode text")
         self._cdoc = CDocument()
-        self._cdoc.add_attr('@uri', uri.encode('utf-8'))
+        self._cdoc.add_attr('@uri', uri)
 
+    @unicodeToByte([(1,'text')], TypeError)
     def addHiddenText(self, text):
         """
         Add text that will affect search scoring but will NOT appear in the
         output document
         """
-        if not type(text) is type(u''):
-            raise TypeError("Must provide unicode text")
-        t = text.encode('utf-8')
-        self._cdoc.add_hidden_text(t)
+        self._cdoc.add_hidden_text(text)
 
+    @unicodeToByte([(1,'text')], TypeError)
     def addText(self, text):
         """
         Put some text into the document
         """
-        if not type(text) is type(u''):
-            raise TypeError("Must provide unicode text")
-        t = text.encode('utf-8')
-        self._cdoc.add_text(t)
+        self._cdoc.add_text(text)
 
     @classmethod
     def fromCDocument(cls, cdocument):
@@ -338,14 +353,12 @@ class HDocument(object):
     def __delitem__(self, name):
         raise NotImplementedError("Cannot delete attributes from this document")
 
+    @unicodeToByte([(1,'name'), (2,'value')], TypeError)
     def __setitem__(self, name, value):
-        if not type(name) is type(value) is type(u''):
-            raise TypeError("Must provide unicode key and value")
-        v = value.encode('utf-8')
-        self._cdoc.add_attr(name, v)
+        self._cdoc.add_attr(name, value)
 
+    @unicodeToByte([(1,'name')], KeyError)
     def __getitem__(self, name):
-        name = name.decode('utf-8')
         if name not in self._cdoc.attr_names():
             raise KeyError(name)
         return self._cdoc.attr(name).decode('utf-8')

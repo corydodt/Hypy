@@ -1,4 +1,3 @@
-3. Use a unicode wrapper on functions
 4. Launch on pypi
 5. Announce on freshmeat, launchpad etc.
 6. Python 3.0 compat
