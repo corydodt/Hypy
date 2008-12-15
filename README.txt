@@ -60,7 +60,9 @@ run.
 Quick Launch
 ~~~~~~~~~~~~
 You can get an instant "oh I get it!" fix by looking inside the "examples"
-directory distributed with this software.
+directory distributed with this software. examples_
+
+.. _examples: http://hypy-source.goonmill.org/file/tip/examples
 
 - gather.py demonstrates how to index documents into a collection
 

@@ -1,3 +1,2 @@
-4. Launch on pypi
-5. Announce on freshmeat, launchpad etc.
+5. Announce on python-announce-list, freshmeat, launchpad, my blog, etc.
 6. Python 3.0 compat
