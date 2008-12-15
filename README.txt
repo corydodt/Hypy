@@ -59,10 +59,12 @@ I. easy_install or pip method
 With setuptools (Ubuntu: sudo apt-get install python-setuptools), you can
 install Hypy without even downloading it first by using
 ::
+
     sudo easy_install hypy
 
 If you have pip_, you can also use that
 ::
+
     sudo pip install hypy
 
 .. _pip: http://pip.openplans.org/
