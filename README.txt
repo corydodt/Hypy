@@ -32,17 +32,20 @@ easiest way to install the software if you are an Ubuntu user.
 
 Installation
 ~~~~~~~~~~~~
+First things first.  Hypy depends on `Hyper Estraier`_.
 
-I. easy_install method
-======================
-With setuptools (Ubuntu: sudo apt-get install python-setuptools), you can
-install Hypy without even downloading it first by using "sudo easy_install
-hypy".
+.. sidebar:: Hyper Estraier
 
+    No matter what method you choose to install Hypy, you will have to
+    install `Hyper Estraier`_ first.
 
-II. source method
-=================
-You may also build the dependencies from source.  They are:
+Source code and a binary installer of Hyper Estraier for Windows can be found at
+the `Hyper Estraier`_ website.
+
+.. _Hyper Estraier: http://hyperestraier.sourceforge.net/
+
+Linux users can probably install binary packages using their favorite package
+manager.  You will need these:
 
 * hyperestraier runtime (on Ubuntu: sudo apt-get install hyperestraier)
 * libestraier headers and object code (on Ubuntu: sudo apt-get install
@@ -50,6 +53,24 @@ You may also build the dependencies from source.  They are:
 * libqdbm headers and object code (on Ubuntu: sudo apt-get install libqdbm-dev)
 * Python headers and object code, natch (on Ubuntu: sudo apt-get install
   python-dev)
+
+I. easy_install or pip method
+======================
+With setuptools (Ubuntu: sudo apt-get install python-setuptools), you can
+install Hypy without even downloading it first by using
+::
+    sudo easy_install hypy
+
+If you have pip_, you can also use that
+::
+    sudo pip install hypy
+
+.. _pip: http://pip.openplans.org/
+
+
+II. source method
+=================
+You may also build the dependencies from source.  They are:
 
 Then just run "python setup.py build; sudo python setup.py install".
 
