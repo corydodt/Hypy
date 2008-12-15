@@ -19,3 +19,9 @@ website:
 
 tests:
 	python -m hypy.test_lib
+
+buildable: VERSION := $(shell hg tags || echo '' | head -2 | grep -v tip | cut -d\  -f1)
+buildable:
+	cd ..; cp -a Hypy hypy-"$(VERSION)"; \
+			cd hypy-"$(VERSION)"; hg purge --all; rm -rf .hg; \
+			cd ..; tar cvfz hypy-$(VERSION).tar.gz hypy-$(VERSION)

@@ -1,5 +1,8 @@
 #
-from setuptools import setup, Extension
+from ez_setup import use_setuptools
+use_setuptools()
+
+from setuptools import setup, Extension, find_packages
 
 ext = Extension("_estraiernative",
                 ["estraiernative.c"],
@@ -18,7 +21,8 @@ setup(
         download_url='http://hypy-source.goonmill.org/archive/tip.tar.gz',
         version="0.8.0", 
         ext_modules=[ext],
-        py_modules=['hypy'],
+        zip_safe=False,
+        packages=find_packages(),
 
         classifiers=[
           'Development Status :: 3 - Alpha',
