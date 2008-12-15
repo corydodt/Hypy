@@ -6,16 +6,17 @@ Hypy
 
     Download the `latest source
     <http://hypy-source.goonmill.org/archive/tip.tar.gz>`_, or `browse the
-    source <http://hypy-source.goonmill.org>`_.  No matter what method you
-    choose to install Hypy, you will have to install `Hyper Estraier`_ first.
+    source`_.  No matter what method you choose to install Hypy, you will have
+    to install `Hyper Estraier`_ first.
 
-
-.. image:: /static/hypylogo.png
+.. _browse the source: http://hypy-source.goonmill.org/file/tip/
 
 .. sidebar:: Docs
 
     `Reference (API) documentation <http://goonmill.org/hypy/apidocs/>`_  See
     `Reference Documentation`_ for more.
+
+.. image:: /static/hypylogo.png
 
 Hypy is a fulltext search interface for Python applications.  Use it to index
 and search your documents from Python code.
@@ -58,12 +59,12 @@ If you are using Ubuntu, you can get all the build dependencies with this comman
 I. easy_install or pip method
 =============================
 With setuptools (Ubuntu: sudo apt-get install python-setuptools), you can
-install Hypy without even downloading it first by using
+install Hypy without even downloading it first, by using
 ::
 
     sudo easy_install hypy
 
-If you have pip_, you can also use that
+If you have pip_, you should use that
 ::
 
     sudo pip install hypy
@@ -81,23 +82,17 @@ Optionally, run ``make tests`` in the source directory to see the unit tests
 run.
  
 
-Quick Launch
-~~~~~~~~~~~~
+Quick Start 
+~~~~~~~~~~~
 You can get an instant "oh I get it!" fix by looking inside the "examples"
-directory distributed with this software. examples_
+directory distributed with this software.
 
-.. _examples: http://hypy-source.goonmill.org/file/tip/examples
+- `gather.py`_ demonstrates how to index documents into a collection
 
-- gather.py demonstrates how to index documents into a collection
+- `search.py`_ demonstrates how to search for documents in an existing collection
 
-- search.py demonstrates how to search for documents in an existing collection
-
-
-Somewhat Less Quick Launch
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-Unit tests cover 100% of the code in lib.py.  They have docstrings and
-comments; look there first if you want to see how to do something obscure,
-like attribute comparisons, max and skip searches, etc.
+.. _gather.py: http://hypy-source.goonmill.org/file/tip/examples/gather.py
+.. _search.py: http://hypy-source.goonmill.org/file/tip/examples/search.py
 
 
 Reference Documentation
@@ -110,12 +105,12 @@ following:
 
 * The `Hypy unit tests`_ contain a wealth of examples of search syntax,
   particularly in ``TestDatabase.test_queries`` and
-  ``TestDatabase.test_condExtras``.
+  ``TestDatabase.test_condExtras``.  The tests cover 100% of the code in
+  lib.py.  They have docstrings and comments; obscure things like skip and max
+  searches and various attribute comparisons are covered.
 
 .. _User's Guide: http://hyperestraier.sourceforge.net/uguide-en.html#searchcond
-
 .. _Hypy unit tests: http://hypy-source.goonmill.org/file/tip/hypy/test_lib.py#l328
-
 .. _API docs: http://goonmill.org/hypy/apidocs/
 
 
@@ -144,10 +139,10 @@ Hypy requires Unicode objects in all of its APIs.
 Because of this change, and some other minor, Python-enhancing differences
 between the APIs, I have deliberately renamed all the classes and methods
 supported by Hypy, to prevent confusion.  If you know Python and are already
-familiar with Hyper Estraier, you should now visit the Hypy reference
-documentation to learn the new names of functions.  In general, though,
-"est_someclass_foo_bar" takes a byte string in Hyper Estraier, but becomes
-"HSomeClass.fooBar" in Hypy and takes Unicode text.
+familiar with Hyper Estraier, you should now visit the `API docs`_ to learn
+the new names of functions.  In general, though, "est_someclass_foo_bar" takes
+a byte string in Hyper Estraier, but becomes "HSomeClass.fooBar" in Hypy and
+takes Unicode text.
 
 
 What's not Supported in Hypy vs. Hyper Estraier
