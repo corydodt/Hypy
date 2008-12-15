@@ -15,7 +15,7 @@ Hypy
 .. sidebar:: Docs
 
     `Reference (API) documentation <http://goonmill.org/hypy/apidocs/>`_  See
-    below for more.
+    `Reference Documentation`_ for more.
 
 Hypy is a fulltext search interface for Python applications.  Use it to index
 and search your documents from Python code.
@@ -108,11 +108,13 @@ following:
 * The Hyper Estraier `User's Guide`_ describes the search syntax.  You plug
   this syntax into an instance of ``HCondition`` in Hypy.
 
-* The `Hypy unit tests`_ contain a wealth of examples of search syntax.
+* The `Hypy unit tests`_ contain a wealth of examples of search syntax,
+  particularly in ``TestDatabase.test_queries`` and
+  ``TestDatabase.test_condExtras``.
 
 .. _User's Guide: http://hyperestraier.sourceforge.net/uguide-en.html#searchcond
 
-.. _Hypy unit tests: http://hypy-source.goonmill.org/file/tip/hypy/test_lib.py
+.. _Hypy unit tests: http://hypy-source.goonmill.org/file/tip/hypy/test_lib.py#l328
 
 .. _API docs: http://goonmill.org/hypy/apidocs/
 
