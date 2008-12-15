@@ -37,9 +37,9 @@ class TestHDocument(unittest.TestCase):
         doc[u'foobar'] = u'baz'
         doc[u'foobar']
         self.assertEqual(doc[u'foobar'], u'baz')
-        self.assertEqual(doc.get('foobar', 'default'), u'baz')
-        self.assertEqual(doc.get('xyz', 'default'), 'default')
-        self.assertEqual(doc.get('xyz'), None)
+        self.assertEqual(doc.get(u'foobar', 'default'), u'baz')
+        self.assertEqual(doc.get(u'xyz', 'default'), 'default')
+        self.assertEqual(doc.get(u'xyz'), None)
 
         newattrs = {u'new1': u'lala', u'foobar': u'bazz'}
         doc.update(newattrs)
@@ -227,30 +227,29 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(res2.pluck(u'@uri'), [u'9', u'10', u'11'])
 
             # union matching
-            result = db.search(HCondition('ipsum score', matching='simple'))
+            result = db.search(HCondition(u'ipsum score', matching='simple'))
             self.assertEqual(len(result), 0)
-            result = db.search(HCondition('ipsum score', matching='union'))
+            result = db.search(HCondition(u'ipsum score', matching='union'))
             self.assertEqual(len(result), 2)
 
             # isect matching
-            result = db.search(HCondition('lorem* ipsum*', matching='simple'))
+            result = db.search(HCondition(u'lorem* ipsum*', matching='simple'))
             self.assertEqual(len(result), 1)
-            result = db.search(HCondition('lorem* ipsum*', matching='isect'))
+            result = db.search(HCondition(u'lorem* ipsum*', matching='isect'))
             self.assertEqual(len(result), 0)
-            result = db.search(HCondition('lorem ipsum', matching='isect'))
+            result = db.search(HCondition(u'lorem ipsum', matching='isect'))
             self.assertEqual(len(result), 1)
 
             # rough matching
-            result = db.search(HCondition('lorem* ipsum*', matching='simple'))
+            result = db.search(HCondition(u'lorem* ipsum*', matching='simple'))
             self.assertEqual(len(result), 1)
-            result = db.search(HCondition('lorem* ipsum*', matching='rough'))
+            result = db.search(HCondition(u'lorem* ipsum*', matching='rough'))
             self.assertEqual(len(result), 0)
-            result = db.search(HCondition('lorem ipsum', matching='rough'))
+            result = db.search(HCondition(u'lorem ipsum', matching='rough'))
             self.assertEqual(len(result), 1)
-
 
             # fewer-than-max hits
-            result = db.search(HCondition('7*', matching='simple', max=2))
+            result = db.search(HCondition(u'7*', matching='simple', max=2))
             self.assertEqual(len(result), 1)
             self.assertEqual(result[0][u'@uri'], u'3')
 
@@ -332,7 +331,7 @@ class TestDatabase(unittest.TestCase):
         """
         with self.freshenDatabase() as db:
             # plain search, 8-bit str
-            result = db.search(HCondition('wor*', matching='simple'))
+            result = db.search(HCondition(u'wor*', matching='simple'))
             self.assertEqual(len(result), 3)
 
             # unicode searches
@@ -340,13 +339,13 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(len(result), 3)
 
             # test simple query with multiple hits
-            result = db.search(HCondition('res*', matching='simple'))
-            self.assertEqual(result.pluck('@uri'), [u'1', u'2'])
+            result = db.search(HCondition(u'res*', matching='simple'))
+            self.assertEqual(result.pluck(u'@uri'), [u'1', u'2'])
 
             # vary query terms to check result scoring
-            result = db.search(HCondition('someth* | whatever*', matching='simple', max=2))
+            result = db.search(HCondition(u'someth* | whatever*', matching='simple', max=2))
             self.assertEqual(result.pluck(u'@uri'), [u'2', u'3'])
-            result = db.search(HCondition('someth* | upon*', matching='simple', max=2))
+            result = db.search(HCondition(u'someth* | upon*', matching='simple', max=2))
             self.assertEqual(result.pluck(u'@uri'), [u'3', u'2']) # FIXME
 
             self.assertEqual(result.hintWords(), [u'someth', u'upon'])
