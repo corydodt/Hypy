@@ -19,7 +19,7 @@ setup(
         maintainer_email='pypi@spam.goonmill.org',
         url='http://goonmill.org/hypy/',
         download_url='http://hypy-source.goonmill.org/archive/tip.tar.gz',
-        version="0.8.0", 
+        version="0.8.1", 
         ext_modules=[ext],
         zip_safe=False,
         packages=find_packages(),
