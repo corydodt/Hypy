@@ -34,6 +34,8 @@ Installation: Ubuntu Users
 Hypy is hosted on Launchpad, and has a launchpad PPA.  This is arguably the
 easiest way to install the software if you are an Ubuntu user.
 
+* https://launchpad.net/~corydodt/+archive
+
 Installation
 ~~~~~~~~~~~~
 First things first.  Hypy depends on `Hyper Estraier`_.
