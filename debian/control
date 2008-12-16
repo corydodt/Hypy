@@ -1,4 +1,4 @@
-Source: hypy
+Source: python-hypy
 Section: python
 Priority: extra
 Maintainer: Cory Dodt <launchpad@spam.goonmill.org>

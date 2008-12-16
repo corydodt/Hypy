@@ -34,7 +34,29 @@ Installation: Ubuntu Users
 Hypy is hosted on Launchpad, and has a launchpad PPA.  This is arguably the
 easiest way to install the software if you are an Ubuntu user.
 
-* https://launchpad.net/~corydodt/+archive
+Add the following lines to ``/etc/apt/apt.conf.d/20python-hypy``.  You can
+also paste these lines in to System > Administration > Software Sources >
+Third-Party Software.
+
+(intrepid)
+::
+
+    deb http://ppa.launchpad.net/corydodt/ubuntu intrepid main
+    deb-src http://ppa.launchpad.net/corydodt/ubuntu intrepid main
+
+(or hardy)
+::
+    deb http://ppa.launchpad.net/corydodt/ubuntu hardy main
+    deb-src http://ppa.launchpad.net/corydodt/ubuntu hardy main
+
+Then::
+
+    sudo apt-get update
+    sudo apt-get install python-hypy
+
+All dependencies including Hyper Estraier will be auto-fetched for you, and
+you will get automatic updates when I publish them.
+
 
 Installation
 ~~~~~~~~~~~~
