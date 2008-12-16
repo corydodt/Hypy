@@ -1,5 +1,5 @@
-hypy (0.7.0~ppa1~hardy1) unstable; urgency=low
+hypy (0.8.1~ppa1) intrepid; urgency=low
 
-  * Initial release
+  * Initial public releasery.
 
- -- Cory Dodt <launchpad@spam.goonmill.org>  Sun, 14 Dec 2008 22:26:44 -0800
+ -- Cory Dodt <launchpad@spam.goonmill.org>  Mon, 15 Dec 2008 16:05:01 -0800
