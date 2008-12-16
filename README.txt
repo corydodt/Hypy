@@ -46,6 +46,7 @@ Third-Party Software.
 
 (or hardy)
 ::
+
     deb http://ppa.launchpad.net/corydodt/ubuntu hardy main
     deb-src http://ppa.launchpad.net/corydodt/ubuntu hardy main
 

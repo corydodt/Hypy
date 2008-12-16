@@ -1,4 +1,4 @@
-# hypy version of the estraiernative gather example
+# hypy version of the estraiernative gather/search example
 
 from hypy import HDatabase, HDocument
 
