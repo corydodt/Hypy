@@ -34,7 +34,7 @@ Installation: Ubuntu Users
 Hypy is hosted on Launchpad, and has a launchpad PPA.  This is arguably the
 easiest way to install the software if you are an Ubuntu user.
 
-Add the following lines to ``/etc/apt/apt.conf.d/20python-hypy``.  You can
+Add the following lines to the end of ``/etc/apt/sources.list``.  You can
 also paste these lines in to System > Administration > Software Sources >
 Third-Party Software.
 
