@@ -4,17 +4,18 @@ Hypy
 
 .. sidebar:: Download
 
-    Download the `latest source
-    <http://hypy-source.goonmill.org/archive/tip.tar.gz>`_, or `browse the
-    source`_.  No matter what method you choose to install Hypy, you will have
-    to install `Hyper Estraier`_ first.
+    Download the `latest source`_ or `browse the source`_.  No matter how
+    you choose to install Hypy, you will have to install `Hyper
+    Estraier`_ first.
+
+.. _latest source: http://hypy-source.goonmill.org/archive/tip.tar.gz
 
 .. _browse the source: http://hypy-source.goonmill.org/file/tip/
 
 .. sidebar:: Docs
 
     `Reference (API) documentation <http://goonmill.org/hypy/apidocs/>`_  See
-    `Reference Documentation`_ for more.
+    `Other Reference Docs`_ (below on this page) for even more stuff.
 
 .. image:: /static/hypylogo.png
 
@@ -120,8 +121,8 @@ directory distributed with this software.
 .. _search.py: http://hypy-source.goonmill.org/file/tip/examples/search.py
 
 
-Reference Documentation
-~~~~~~~~~~~~~~~~~~~~~~~
+Other Reference Docs
+~~~~~~~~~~~~~~~~~~~~
 If you can't find what you need in the `API docs`_ you should try one of the
 following:
 
