@@ -64,8 +64,8 @@ Installation
 ~~~~~~~~~~~~
 First things first.  Hypy depends on `Hyper Estraier`_.
 
-Source code and a binary installer of Hyper Estraier for Windows can be found at
-the `Hyper Estraier`_ website.
+Source code of Hyper Estraier, and a binary installer for Windows, can be
+found at the `Hyper Estraier`_ website.
 
 .. _Hyper Estraier: http://hyperestraier.sourceforge.net/
 
@@ -104,8 +104,11 @@ II. source method
 
     python setup.py build; sudo python setup.py install
 
-Optionally, run ``make tests`` in the source directory to see the unit tests
-run.
+Optionally, run::
+
+    make tests
+
+in the source directory to see the unit tests run.
  
 
 Quick Start 
