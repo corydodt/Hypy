@@ -116,9 +116,28 @@ Quick Start
 You can get an instant "oh I get it!" fix by looking inside the "examples"
 directory distributed with this software.
 
-- `gather.py`_ demonstrates how to index documents into a collection
+Index documents into a collection (see `gather.py`_ for the complete program)::
 
-- `search.py`_ demonstrates how to search for documents in an existing collection
+    ...
+
+    db = HDatabase()
+    db.open('casket', 'w')
+    # create a document object
+    doc = HDocument(uri=u'http://estraier.gov/example.txt')
+    ...
+
+Search for documents in an existing collection (see `search.py`_ for the
+complete program)::
+
+    ...
+
+    # create a search condition object
+    cond = HCondition(u'lull*')
+    # get the result of search
+    result = db.search(cond)
+    # iterate the result
+    for doc in result:
+    ...
 
 .. _gather.py: http://hypy-source.goonmill.org/file/tip/examples/gather.py
 .. _search.py: http://hypy-source.goonmill.org/file/tip/examples/search.py
