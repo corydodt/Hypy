@@ -133,12 +133,11 @@ class HDatabase(object):
 
     Set autoflush=False to manually flush, which allows better performance
     when indexing lots of documents at once.
+
+    Per http://hyperestraier.sourceforge.net/uguide-en.html Hyper Estraier
+    expects data to be stored as utf-8 bytes.  Therefore, there is no encoding
+    parameter.
     """
-    # TODO - pass an optional encoding into __init__ (default utf-8) to
-    # specify the desired encoding.  after a database is created, write a
-    # special file in it that remembers the encoding.  read that file on
-    # opening to set an instance variable.  replace all 'utf-8' with
-    # self.encoding in database accesses
     def __init__(self, autoflush=False):
         self._cdb = CDatabase()
         self.autoflush = autoflush
@@ -316,6 +315,8 @@ class HResults(list):
 class HDocument(object):
     """
     Dict-like interface to a document
+
+    >>> doc = HDocument(u'http://sample.com/page.html')
     """
     def __str__(self):
         return self._cdoc.dump_draft()
