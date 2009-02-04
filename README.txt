@@ -42,8 +42,8 @@ Third-Party Software.
 (intrepid)
 ::
 
-    deb http://ppa.launchpad.net/corydodt/ubuntu intrepid main
-    deb-src http://ppa.launchpad.net/corydodt/ubuntu intrepid main
+    deb http://ppa.launchpad.net/corydodt/ppa/ubuntu intrepid main
+    deb-src http://ppa.launchpad.net/corydodt/ppa/ubuntu intrepid main
 
 (or hardy)
 ::
