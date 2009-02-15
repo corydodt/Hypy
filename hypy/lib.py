@@ -1,6 +1,13 @@
 """
 Put a Pythonic face on estraiernative
 """
+import sys
+from HTMLParser import HTMLParser
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+
 from _estraiernative import (Condition as CCondition,
     Database as CDatabase, Document as CDocument, EstError as CError)
 
@@ -415,16 +422,78 @@ class HDocument(object):
     id = property(_get_id)
 
 
+class HTMLToIRCizer(HTMLParser):
+    """
+    Chop an html string up to make an irc string
+    (currently supports only the html produced in hypy's snippets)
+    """
+    def __init__(self, io):
+        HTMLParser.__init__(self)
+        self.io = io
+
+    def handle_data(self, data):
+        self.io(data)
+
+    def handle_starttag(self, tag, attrs):
+        getattr(self, 'handle_starttag_%s' % (tag,), self.handleStartTagDefault)(attrs)
+
+    def handle_endtag(self, tag):
+        getattr(self, 'handle_endtag_%s' % (tag,), self.handleEndTagDefault)()
+
+    def handleStartTagDefault(self, attrs):
+        """
+        Don't care about this tag
+        """
+
+    def handleEndTagDefault(self):
+        """
+        Don't care about this tag
+        """
+
+    def handle_starttag_strong(self, attrs):
+        self.io('**')
+
+    def handle_endtag_strong(self):
+        self.io('**')
+
+def rstFromHTML(s):
+    """
+    Convert a very limited subset of HTML to a snippet of rst.
+    Currently just converts <strong> to **
+    """
+    p = HTMLToIRCizer(sys.stdout.write)
+    p.feed(s)
+    p.close()
+
 class HHit(HDocument):
     """
     A hit returned by a search.
     """
+
+    teaserFormats = 'html rst'.split()
+
+    def emphasize_html(self, text):
+        """
+        Write emphasized text in html
+        """
+        return '<strong>%s</strong>' % text
+
+    def emphasize_rst(self, text):
+        """
+        Write emphasized text in restructuredtext
+        """
+        return '**%s**' % text
+
+
     def teaser(self, terms, format='html'):
         """
         Produce the teaser/snippet text for the hit
         """
-        if format != 'html':
-            raise NotImplementedError("Only html format supported for teaser text")
+        if format not in self.teaserFormats:
+            raise NotImplementedError( "Supported formats are: %s" % (
+                ', '.join(self.teaserFormats),))
+
+        emph = getattr(self, 'emphasize_%s' % (format,))
 
         # arguments to make_snippet MUST be byte strings
         bterms = []
@@ -443,8 +512,7 @@ class HHit(HDocument):
             _bitStrings = []
             for bit in bunch.split('\n'):
                 if '\t' in bit:
-                    _bitStrings.append('<strong>%s</strong>' %
-                            (bit.split('\t')[0],))
+                    _bitStrings.append(emph(bit.split('\t')[0]))
                 else:
                     _bitStrings.append(bit)
             strings.append(''.join(_bitStrings))
