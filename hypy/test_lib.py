@@ -68,6 +68,10 @@ class TestHDocument(unittest.TestCase):
 
         self.assertEqual(u'xyz\n123', doc.text)
 
+        doc.addText(u'\u062b')
+
+        self.assertEqual('xyz123\xd8\xab', doc.encode('utf-8'))
+
     def test_unicodeType(self):
         """
         Almost everything in hypy must be unicode

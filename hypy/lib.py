@@ -421,6 +421,11 @@ class HDocument(object):
         return self._cdoc.id()
     id = property(_get_id)
 
+    def encode(self, encoding):
+        """
+        Return an encoded version of this document.  Convenience method
+        """
+        return ''.join([s.encode(encoding) for s in self.getTexts()])
 
 class HTMLToIRCizer(HTMLParser):
     """
@@ -483,7 +488,6 @@ class HHit(HDocument):
         Write emphasized text in restructuredtext
         """
         return '**%s**' % text
-
 
     def teaser(self, terms, format='html'):
         """
