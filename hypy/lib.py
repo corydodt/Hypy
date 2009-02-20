@@ -98,9 +98,10 @@ class HCondition(object):
     Use matching='simple', 'rough', 'union' or 'isect'
     """
     @unicodeToByte([(1,'phrase')], TypeError)
-    def __init__(self, phrase, matching='simple', max=None, skip=None):
+    def __init__(self, phrase=None, matching='simple', max=None, skip=None):
         self.condition = CCondition()
-        self.condition.set_phrase(phrase)
+        if phrase is not None:
+            self.condition.set_phrase(phrase)
         if max is not None:
             self.condition.set_max(max)
         if skip is not None:

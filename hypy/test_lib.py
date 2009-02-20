@@ -261,8 +261,11 @@ class TestDatabase(unittest.TestCase):
             cc = HCondition(u'*.**')
             self.assertRaises(TypeError, cc.addAttr, 'xxx')
 
-            def attrSearch(expr, order=None):
-                cond = HCondition(u'*.**') # regular expression match, all characters
+            def attrSearch(expr, order=None, phrase=None):
+                if phrase:
+                    cond = HCondition(phrase)
+                else:
+                    cond = HCondition()
                 cond.addAttr(expr)
                 if order:
                     self.assertRaises(TypeError, cond.setOrder, '*.**')
@@ -273,13 +276,18 @@ class TestDatabase(unittest.TestCase):
             result = attrSearch(u'specialId NUMGE 10')
             self.assertEqual(result.pluck(u'@uri'), [u'10', u'11', u'12', u'13'])
             result = attrSearch(u'date NUMGE 2008-12-09')
-            self.assertEqual(result.pluck(u'@uri'), [u'9', u'10', u'11', u'12', u'13'])
+            self.assertEqual(sorted(map(int, result.pluck(u'@uri'))), [9, 10, 11, 12, 13])
             result = attrSearch(u'description STRRX .{10,14}')
             self.assertEqual(result.pluck(u'@uri'), [u'10', u'11', u'12', u'13'])
             # ordering and !not
             result = attrSearch(u'description !STRRX .{10,14}', u'@uri NUMA')
             self.assertEqual(result.pluck(u'@uri'), list(u'123456789'))
             result = attrSearch(u'description STRRX .{10,14}', u'@uri NUMD')
+            self.assertEqual(result.pluck(u'@uri'), [u'13', u'12', u'11', u'10'])
+
+            # one attribute search combined with a text search - regular
+            # expression match, all characters
+            result = attrSearch(u'description STRRX .{10,14}', u'@uri NUMD', u'*.**')
             self.assertEqual(result.pluck(u'@uri'), [u'13', u'12', u'11', u'10'])
 
     def test_dbOpenClosed(self):
