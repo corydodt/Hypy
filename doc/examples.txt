@@ -459,7 +459,7 @@ can also limit the number of hits and change the order of hits.
 ::
 
     print db.search(HCondition(u'e*')).pluck(u'@id')
-    # prints [u'5', u'2', u'5']
+    # prints [u'5', u'2', u'6']
     print db.search(HCondition(u'e*', max=2)).pluck(u'@id')
     # prints [u'5', u'2'] .. what did you expect?
 
