@@ -2,46 +2,52 @@
 Hypy by Example
 ===============
 
+Hypy by Example
+===============
+
 
 .. contents::
 
-.. sidebar:: Important Classes and Methods
 
-   HDatabase
-        Represents the overall data store containing the index.  **Key
-        Methods**: ``db.open(filename, mode)``, ``db.close()``,
-        ``db.putDoc(document)``, ``db.search(condition)``
 
-   HDocument
-        Represents a single document/location which will be indexed and
-        stored. **Key Methods**: ``doc.addText(text)``,
-        ``doc.addHiddenText(text)``, ``doc.encode(encoding)``
+Important Classes and Methods
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        In addition, HDocument acts like a dictionary, where the keys are the
-        attributes (metadata) of the document.  For example, ``doc[u'@uri']``
-        returns a document's @uri attribute.  Dictionary methods work too.
+HDatabase
+    Represents the overall data store containing the index.  **Key
+    Methods**: ``db.open(filename, mode)``, ``db.close()``,
+    ``db.putDoc(document)``, ``db.search(condition)``
 
-   HHit
-        A subclass of HDocument which represents one hit returned from a
-        search.  It has the capabilities of HDocument, plus one more.  **Key
-        Methods**: ``result.teaser(wordList)``
+HDocument
+    Represents a single document/location which will be indexed and
+    stored. **Key Methods**: ``doc.addText(text)``,
+    ``doc.addHiddenText(text)``, ``doc.encode(encoding)``
 
-   HResults
-        A collection of HHit returned from a search.  **Key Methods**:
-        ``results.hitWords()``, ``results.pluck(attr)``
+    In addition, HDocument acts like a dictionary, where the keys are the
+    attributes (metadata) of the document.  For example, ``doc[u'@uri']``
+    returns a document's @uri attribute.  Dictionary methods work too.
 
-        In addition, HResults acts like a list, so you can iterate results.
+HHit
+    A subclass of HDocument which represents one hit returned from a
+    search.  It has the capabilities of HDocument, plus one more.  **Key
+    Methods**: ``result.teaser(wordList)``
 
-   HCondition
-        A query object which is used to perform a search.  Construct one of
-        these with the parameters of the search, such as the phrase to search
-        for and maximum number of hits, or metadata attributes.  **Key
-        Methods**: ``cond.addAttr(attributeExpression)``,
-        ``cond.setOrder(orderExpression)``
-        
+HResults
+    A collection of HHit returned from a search.  **Key Methods**:
+    ``results.hitWords()``, ``results.pluck(attr)``
+
+    In addition, HResults acts like a list, so you can iterate results.
+
+HCondition
+    A query object which is used to perform a search.  Construct one of
+    these with the parameters of the search, such as the phrase to search
+    for and maximum number of hits, or metadata attributes.  **Key
+    Methods**: ``cond.addAttr(attributeExpression)``,
+    ``cond.setOrder(orderExpression)``
+    
 
 Examples
-========
+~~~~~~~~
 
 Most of these examples will build on each other in order.  If you want to run
 all of them, it's probably best to type them in one after the other.  If
@@ -91,7 +97,7 @@ Internet.
     $ estwaver init hypysite
     2009-02-21T23:18:45Z    INFO    the root directory created
 
-``estwaver init`` does the same thing as ``db.open(INDEX, 'w')`` in the
+estwaver ``init`` does the same thing as ``db.open(INDEX, 'w')`` in the
 example above, except that it also creates a boilerplate config file.
 
 There will now be a file called ``hypy/_conf``.  Edit this file.  Change the seeds
@@ -124,19 +130,21 @@ builtin wiki stuff
 
     # leave the rest of denyrx in place.
 
-Now crawl the site using ``estwaver crawl``, telling it the index directory to index
-into
+Now crawl the site using estwaver ``crawl``, telling it the index
+directory to index into
 ::
 
     $ estwaver crawl hypysite
-    2009-02-21T23:44:43Z    INFO    DB-EVENT: status: name=hypysite/_index dnum=0 wnum=0 fsiz=9259062 crnum=0 csiz=0 dknum=0
+    2009-02-21T23:44:43Z    INFO    DB-EVENT: status: name=hypysite/_index ...
     2009-02-21T23:44:43Z    INFO    crawling started (continue)
     2009-02-21T23:44:43Z    INFO    fetching: 0: http://goonmill.org/
     2009-02-21T23:44:44Z    INFO    seeding: 1.000: http://goonmill.org/
     2009-02-21T23:44:45Z    INFO    [1]: fetching: 0: http://goonmill.org/
     2009-02-21T23:44:45Z    INFO    [2]: fetching: 1: http://goonmill.org/cory
+
     ...
-    2009-02-21T23:47:02Z    INFO    DB-EVENT: closing: name=hypysite/_index dnum=1364 wnum=15413 fsiz=13406650 crnum=0 csiz=0 dknum=0
+
+    2009-02-21T23:47:02Z    INFO    DB-EVENT: closing: name=hypysite/_index ...
     2009-02-21T23:47:02Z    INFO    finished successfully
 
 .. _details on estwaver: http://hyperestraier.sourceforge.net/cguide-en.html#introduction
@@ -160,7 +168,7 @@ unicode strings.  Hypy requires Unicode strings everywhere you would give it
 text.**
 
 This document is available for search only when the index has been flushed.
-This happens every time:
+This happens each time:
 
 * the index is closed with close()
 * you call flush() on the index
@@ -243,8 +251,8 @@ index by uri, using dict-like getitem syntax
 
 What it prints is known as the "draft" format, and is an internal
 representation of the document.  It's also what you get when you use ``str()``
-on a document, but this is not recommended way to get the text.  To get the
-document text encoded in a representation of your choice, use ``encode()``
+on a document, but this is not the recommended way to get the text.  To get
+the document text encoded in a representation of your choice, use ``encode()``
 ::
 
     print doc2.encode('utf-16')
@@ -296,7 +304,7 @@ Results are list-like
     # you can also do this another way, using pluck to get an attribute off of
     # every result document:
 
-    print doc.pluck(u'@id')
+    print results.pluck(u'@id')
     # prints [u'5', u'2']
 
 Search using wildcards is also supported::
@@ -370,10 +378,7 @@ There is also a robust syntax for searching for attributes.
     print db.search(cond)[0][u'@id']
     # prints 5
 
-    cond = HCondition()
-    cond.addAttr(u'@id STREQ 5')
-    print db.search(cond)[0][u'@id']
-    # prints 5
+Let's set up a little for the rest of the examples::
 
     # for clarity in the rest of these examples, I'll use this function:
     def attrSx(expr):
@@ -394,7 +399,7 @@ There is also a robust syntax for searching for attributes.
     db.putDoc(doc6)
     db.putDoc(doc5)
 
-    # numeric searches
+Numeric searches::
 
     print attrSx(u'maxprice NUMGE 50')
     # prints 6
@@ -404,28 +409,36 @@ There is also a robust syntax for searching for attributes.
     # match this one:
     print attrSx(u'minprice NUMLE 50')
     # prints 2 6 5
+
     # and two documents match this one:
     print attrSx(u'minprice NUMLE 0.99')
     # prints 2 5
 
 
-    # date comparisons are numeric comparisons
+Date comparisons are numeric comparisons::
+
     print attrSx(u'date NUMGE 2008-12-31')
     # prints 6 5
+
     print attrSx(u'date NUMGE 2009-01-30')
     # prints 6
 
-    # regular expressions, why not
+Regular expressions, why not::
 
     print attrSx(u'@uri STRRX (pricelist.txt|spam.txt)')
     # prints 2 6
 
-    # you can invert them, too, to get only documents not matching
+You can invert any attribute expression, too, to get only documents *not*
+matching::
+
     print attrSx(u'@uri !STRRX (pricelist.txt|spam.txt)')
     # prints 5
 
-    # and of course, you can use attribute searches in the same condition with
-    # phrase searches
+And of course, you can use attribute searches in the same condition with
+phrase searches.  They combine as using the matching rule of the condition
+(i.e. usually intersection, i.e. "match spam AND minprice<=50")
+::
+
     cond = HCondition(u'spam')
     cond.addAttr(u'minprice NUMLE 50')
     print db.search(cond)[0][u'@id']
@@ -439,10 +452,17 @@ Phew!  Lots of attribute search options and stuff.  Well, that's not all.  You
 can also limit the number of hits and change the order of hits.
 ::
 
-    print len(db.search(HCondition(u'e*')))
-    # prints 3
-    print len(db.search(HCondition(u'e*', max=2)))
-    # prints 2. What did you expect?
+    print db.search(HCondition(u'e*')).pluck(u'@id')
+    # prints [u'5', u'2', u'5']
+    print db.search(HCondition(u'e*', max=2)).pluck(u'@id')
+    # prints [u'5', u'2'] .. what did you expect?
+
+If you use ``max`` you probably also want ``skip``.
+::
+
+    print db.search(HCondition(u'e*', skip=2)).pluck(u'@id')
+    # prints [u'6']
+
 
 To change the order, call ``setOrder(order)`` on the condition.  The `Hyper
 Estraier User's Guide`_ has a complete reference on order expressions.  This
@@ -468,23 +488,22 @@ one changes the result order by the @id attribute.
 
 
 Other Reference Docs
-====================
+~~~~~~~~~~~~~~~~~~~~
 
 Well, that sure was a lot.  If you still didn't find what you want, well, dig
 deeper:
 
 #. Try the `API docs`_, which are delicious.
 
-#. If you can't find what you need there, you should try one of the following:
+#. The Hyper Estraier `User's Guide`_ describes the search syntax, as well as
+   the syntaxes for attribute search and ordering.  As we've mentioned several
+   times before.
 
-    * The Hyper Estraier `User's Guide`_ describes the search syntax, as well
-      as the syntaxes for attribute search and ordering.  As we've mentioned
-      several times before.
-    * The `Hypy unit tests`_ contain a wealth of examples of search syntax,
-      particularly in ``TestDatabase.test_queries`` and
-      ``TestDatabase.test_condExtras``.  The tests cover 100% of the code in
-      lib.py.  They have docstrings and comments; obscure things like skip and
-      max searches and various attribute comparisons are covered.
+#. The `Hypy unit tests`_ contain a wealth of examples of search syntax,
+   particularly in ``TestDatabase.test_queries`` and
+   ``TestDatabase.test_condExtras``.  The tests cover 100% of the code in
+   lib.py.  They have docstrings and comments; obscure things like skip and
+   max searches and various attribute comparisons are covered.
 
 .. _User's Guide: http://hyperestraier.sourceforge.net/uguide-en.html#searchcond
 .. _Hypy unit tests: http://hypy-source.goonmill.org/file/tip/hypy/test_lib.py#l328

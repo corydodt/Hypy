@@ -69,13 +69,15 @@ If you don't have Ubuntu or don't intend to use the PPA, you will need to
 (a) install Hyper Estraier, then (b) install Hypy.
 
 **Don't be intimidated by how long this section is; check your distribution
-first for binary packages!  Windows users, there's a link for you.  Everyone
-who likes things to be complicated, read on.**
+first for binary packages!  Windows users, there's a link for you below.
+Everyone who likes things to be complicated, read on.**
 
 Installing Hyper Estraier on Windows
 ====================================
 
-If you are using Windows, a binary installer for `Windows Hyper Estraier`_ can be had. 
+If you are using Windows, a binary installer for `Windows Hyper Estraier`_ can
+be had.  **You must still install Hypy, perhaps with easy_install, so see
+below.**
 
 .. _Windows Hyper Estraier: http://hyperestraier.sourceforge.net/win/
 
