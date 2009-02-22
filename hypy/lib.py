@@ -332,7 +332,7 @@ class HDocument(object):
     @unicodeToByte([(1,'uri')], TypeError)
     def __init__(self, uri):
         self._cdoc = CDocument()
-        self._cdoc.add_attr('@uri', uri)
+        self._cdoc.add_attr('@uri', uri.replace('\0', ''))
 
     @unicodeToByte([(1,'text')], TypeError)
     def addHiddenText(self, text):
@@ -340,14 +340,14 @@ class HDocument(object):
         Add text that will affect search scoring but will NOT appear in the
         output document
         """
-        self._cdoc.add_hidden_text(text)
+        self._cdoc.add_hidden_text(text.replace('\0', ''))
 
     @unicodeToByte([(1,'text')], TypeError)
     def addText(self, text):
         """
         Put some text into the document
         """
-        self._cdoc.add_text(text)
+        self._cdoc.add_text(text.replace('\0', ''))
 
     @classmethod
     def fromCDocument(cls, cdocument):
@@ -364,7 +364,8 @@ class HDocument(object):
 
     @unicodeToByte([(1,'name'), (2,'value')], TypeError)
     def __setitem__(self, name, value):
-        self._cdoc.add_attr(name, value)
+        self._cdoc.add_attr(name.replace('\0', ''),
+                value.replace('\0', ''))
 
     @unicodeToByte([(1,'name')], KeyError)
     def __getitem__(self, name):

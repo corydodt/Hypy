@@ -197,6 +197,33 @@ class TestDatabase(unittest.TestCase):
             self.assertFalse(dbdocxx is dbdocxx2)
             self.assertEqual(dbdocxx2.get(u'zz'), u'hello')
 
+    def test_removeNulls(self):
+        """
+        Bug 321579: nulls should not kill addText
+        """
+        docnulls = HDocument(uri=u'nulls\0')
+        docnulls.addText(u'hello there\0 children')
+        docnulls.addHiddenText(u'sweet\0sweet love')
+        docnulls[u'character\0'] = u'chef\0'
+        with self.freshenDatabase() as db:
+            db.putDoc(docnulls)
+            db.flush()
+            cond = HCondition(u'there*')
+            self.assertEqual(db.search(cond).pluck(u'@uri'), [u'nulls'])
+            cond = HCondition(u'sweet*')
+            self.assertEqual(db.search(cond).pluck(u'@uri'), [u'nulls'])
+
+            cond = HCondition()
+            cond.addAttr(u'character STREQ chef')
+            self.assertEqual(db.search(cond).pluck(u'@uri'), [u'nulls'])
+
+            docnulls[u'voi\0ce'] = u'Isaac Hayes'
+            db.updateAttributes(docnulls)
+
+            cond = HCondition()
+            cond.addAttr(u'voice STRRX .saac.*')
+            self.assertEqual(db.search(cond).pluck(u'@uri'), [u'nulls'])
+
     def test_putFlags(self):
         """
         Tests for put flags, other put-related corner cases.
