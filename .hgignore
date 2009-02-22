@@ -9,3 +9,4 @@ hgserve.pid
 _temp_db/.*
 dist/.*
 changelog.dch
+.*.txt.html

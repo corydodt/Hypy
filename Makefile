@@ -8,6 +8,8 @@ stop:
 website:
 	rst2html --stylesheet-path=doc/docutils.css README.txt \
 		/var/www/goonmill.org/hypy/index.tsw
+	rst2html --stylesheet-path=doc/docutils.css doc/examples.txt \
+		/var/www/goonmill.org/hypy/examples.tsw
 	pydoctor --add-package hypy --project-name="Hypy" \
 		--project-url="http://goonmill.org/hypy/" \
 		--make-html \

@@ -4,18 +4,20 @@ Hypy
 
 .. sidebar:: Download
 
-    Download the `latest source`_ or `browse the source`_.  No matter how
-    you choose to install Hypy, you will have to install `Hyper
-    Estraier`_ first.
+    Download the `latest source`_ or `browse the source`_ or get the `latest
+    official release`_.
 
 .. _latest source: http://hypy-source.goonmill.org/archive/tip.tar.gz
-
+.. _latest official release: http://pypi.python.org/pypi/Hypy/0.8.2
 .. _browse the source: http://hypy-source.goonmill.org/file/tip/
 
 .. sidebar:: Docs
 
-    `Reference (API) documentation <http://goonmill.org/hypy/apidocs/>`_  See
-    `Other Reference Docs`_ (below on this page) for even more stuff.
+    `Reference (API) documentation <http://goonmill.org/hypy/apidocs/>`_.   Or
+    maybe `Quick Start`_ (below on this page).  You probably want the
+    `examples`_ though, knowing you.
+
+.. _examples: examples.tsw
 
 .. image:: /static/hypylogo.png
 
@@ -30,8 +32,8 @@ Hirabayashi.
 README
 ------
 
-Installation: Ubuntu Users
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Installation: Ubuntu using APT
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Hypy is hosted on Launchpad, and has a launchpad PPA.  This is arguably the
 easiest way to install the software if you are an Ubuntu user.
 
@@ -60,14 +62,25 @@ All dependencies including Hyper Estraier will be auto-fetched for you, and
 you will get automatic updates when I publish them.
 
 
-Installation
-~~~~~~~~~~~~
-First things first.  Hypy depends on `Hyper Estraier`_.
+Installation: Non-Ubuntu
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-Source code of Hyper Estraier, and a binary installer for Windows, can be
-found at the `Hyper Estraier`_ website.
+If you don't have Ubuntu or don't intend to use the PPA, you will need to
+(a) install Hyper Estraier, then (b) install Hypy.
 
-.. _Hyper Estraier: http://hyperestraier.sourceforge.net/
+**Don't be intimidated by how long this section is; check your distribution
+first for binary packages!  Windows users, there's a link for you.  Everyone
+who likes things to be complicated, read on.**
+
+Installing Hyper Estraier on Windows
+====================================
+
+If you are using Windows, a binary installer for `Windows Hyper Estraier`_ can be had. 
+
+.. _Windows Hyper Estraier: http://hyperestraier.sourceforge.net/win/
+
+Installing Hyper Estraier (dev packages) with a package manager
+===============================================================
 
 Linux users can probably install binary packages using their favorite package
 manager.  You will need these:
@@ -77,13 +90,23 @@ manager.  You will need these:
 * libqdbm headers and object code
 * Python headers and object code, natch
 
-If you are using Ubuntu, you can get all the build dependencies with this command
-::
+If you are using Ubuntu (and for some reason you won't just use the PPA
+above), you can get all the build dependencies with this command::
 
     sudo apt-get install hyperestraier libestraier-dev libqdbm-dev python-dev
 
-I. easy_install or pip method
-=============================
+Installing Hyper Estraier from Source
+=====================================
+
+Instructions for building and `installing Hyper Estraier`_ can be found on
+that site.  It is a standard configure/make/make install process, but you must
+make sure to download all the required files.  See the Hyper Estraier
+installation page for details.
+
+.. _installing Hyper Estraier: http://hyperestraier.sourceforge.net/intro-en.html#installation
+
+Then: Install Hypy with easy_install or pip
+===========================================
 With setuptools (Ubuntu: sudo apt-get install python-setuptools), you can
 install Hypy without even downloading it first, by using
 ::
@@ -98,10 +121,14 @@ If you have pip_, you should use that
 .. _pip: http://pip.openplans.org/
 
 
-II. source method
-=================
+... or: Install Hypy from tarball
+=================================
+
+Get one of the tarballs `linked`_ at the top of the page.
+
 ::
 
+    tar xvfz hypy.tar.gz; cd Hypy-*
     python setup.py build; sudo python setup.py install
 
 Optionally, run::
@@ -109,6 +136,8 @@ Optionally, run::
     make tests
 
 in the source directory to see the unit tests run.
+
+.. _linked: Hypy_
  
 
 Quick Start 
@@ -143,23 +172,15 @@ complete program)::
 .. _search.py: http://hypy-source.goonmill.org/file/tip/examples/search.py
 
 
-Other Reference Docs
-~~~~~~~~~~~~~~~~~~~~
-If you can't find what you need in the `API docs`_ you should try one of the
-following:
+Hey, I need Even More Examples
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* The Hyper Estraier `User's Guide`_ describes the search syntax.  You plug
-  this syntax into an instance of ``HCondition`` in Hypy.
+OK. 
 
-* The `Hypy unit tests`_ contain a wealth of examples of search syntax,
-  particularly in ``TestDatabase.test_queries`` and
-  ``TestDatabase.test_condExtras``.  The tests cover 100% of the code in
-  lib.py.  They have docstrings and comments; obscure things like skip and max
-  searches and various attribute comparisons are covered.
+Here are `even more examples`_.  (Find this in the doc/ directory if you
+unpacked the tarball and are reading this from there.)
 
-.. _User's Guide: http://hyperestraier.sourceforge.net/uguide-en.html#searchcond
-.. _Hypy unit tests: http://hypy-source.goonmill.org/file/tip/hypy/test_lib.py#l328
-.. _API docs: http://goonmill.org/hypy/apidocs/
+.. _even more examples: examples.tsw
 
 
 Read This! - Unicode
@@ -192,6 +213,7 @@ the new names of functions.  In general, though, "est_someclass_foo_bar" takes
 a byte string in Hyper Estraier, but becomes "HSomeClass.fooBar" in Hypy and
 takes Unicode text.
 
+.. _API docs: api/
 
 What's not Supported in Hypy vs. Hyper Estraier
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
