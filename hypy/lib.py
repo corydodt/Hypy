@@ -428,48 +428,6 @@ class HDocument(object):
         """
         return ''.join([s.encode(encoding) for s in self.getTexts()])
 
-class HTMLToIRCizer(HTMLParser):
-    """
-    Chop an html string up to make an irc string
-    (currently supports only the html produced in hypy's snippets)
-    """
-    def __init__(self, io):
-        HTMLParser.__init__(self)
-        self.io = io
-
-    def handle_data(self, data):
-        self.io(data)
-
-    def handle_starttag(self, tag, attrs):
-        getattr(self, 'handle_starttag_%s' % (tag,), self.handleStartTagDefault)(attrs)
-
-    def handle_endtag(self, tag):
-        getattr(self, 'handle_endtag_%s' % (tag,), self.handleEndTagDefault)()
-
-    def handleStartTagDefault(self, attrs):
-        """
-        Don't care about this tag
-        """
-
-    def handleEndTagDefault(self):
-        """
-        Don't care about this tag
-        """
-
-    def handle_starttag_strong(self, attrs):
-        self.io('**')
-
-    def handle_endtag_strong(self):
-        self.io('**')
-
-def rstFromHTML(s):
-    """
-    Convert a very limited subset of HTML to a snippet of rst.
-    Currently just converts <strong> to **
-    """
-    p = HTMLToIRCizer(sys.stdout.write)
-    p.feed(s)
-    p.close()
 
 class HHit(HDocument):
     """
