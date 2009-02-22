@@ -2,6 +2,12 @@
 Hypy by Example
 ===============
 
+.. image:: /static/hypylogo.png
+
+`Hypy Main Page`_
+
+.. _Hypy Main Page: http://goonmill.org/hypy
+
 Hypy by Example
 ===============
 
