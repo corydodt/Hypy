@@ -29,6 +29,7 @@ release:
 changelog: msg = "This will update your changelog - type in new release notes and update version $(tag).txt. ^C to cancel"
 changelog:
 	@read -p $(msg) x
+	-commit-popup
 	dch -i
 
 release-tag: "This will COMMIT doc/release-notes/$(tag).txt and tag the release, and push changes. ^C to cancel"

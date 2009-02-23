@@ -1,0 +1,110 @@
+#!/usr/bin/env python
+"""
+Display commits, grouped by bug, in a gedit window.  By default this displays
+all commits since the previous tag.
+"""
+from __future__ import with_statement
+
+import sys, os
+import re
+import subprocess
+import tempfile
+
+from twisted.python import usage
+
+BUGCATCHER = re.compile(r'^\s*#?\s*(\d+)(:|\s)\s*(.*)')
+
+
+def maxTag(tagdata):
+    """
+    Return the local revision of the highest non-tip tag
+    """
+    nontip = tagdata.splitlines()[1].split()
+    return int(nontip[1].split(':', 1)[0])
+
+
+
+class Options(usage.Options):
+    synopsis = "commit-popup"
+    optParameters = [
+            ['revision', 'r', None, 'Use this revision as the starting point'],
+    ]
+
+    # def parseArgs(self, ...):
+
+    def postOptions(self):
+        proc = subprocess.Popen('hg tags',
+                shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        tags, err = proc.communicate()
+        if not proc.returncode == 0:
+            raise usage.UsageError("** hg tags failed: %s" % (err,))
+
+        tagRev = maxTag(tags) + 2
+        
+        template = '{rev}\t{date|isodate}\t{desc|firstline}\n'
+
+        proc = subprocess.Popen('hg log --template "%s" -r %s:tip' % ( template, tagRev ),
+                shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        revisions, err = proc.communicate()
+
+        if not proc.returncode == 0:
+            raise usage.UsageError("** hg log failed: %s" % (err,))
+
+        bugs = {}
+
+        for revision in revisions.splitlines():
+            rev, date, desc = revision.split('\t')
+            match = BUGCATCHER.match(desc)
+            if match is None:
+                key = None
+            else:
+                key = match.group(1)
+            bugs.setdefault(key, []).append((rev, date, desc))
+
+        sorts = sorted(bugs.items())
+
+        if sorts and sorts[0][0] is None:
+            nones = sorts.pop(0)
+        else:
+            nones = []
+
+        text = []
+
+        for bug, revs in sorts:
+            descs = []
+            for rev, date, desc in revs:
+                descs.append(BUGCATCHER.match(desc).group(3))
+
+            text.append("#%s ::    %s" % (bug, ', '.join(descs),))
+
+        if nones:
+            descs = []
+            for bug, date, desc in nones[1]:
+                descs.append("%s %s" % (date.split()[0], desc))
+            text.append('NO BUG ::    ' + ', '.join(descs))
+
+        with tempfile.NamedTemporaryFile() as temp:
+            temp.write('\n\n'.join(text))
+            temp.read()
+            proc = subprocess.Popen('xterm -geom 120x40 -e vim -c "set ft=" "%s"' % (temp.name,),
+                    shell=True)
+            # allow vim to open before the temporary file is deleted
+            import time; time.sleep(2)
+
+def run(argv=None):
+    if argv is None:
+        argv = sys.argv
+    o = Options()
+    try:
+        o.parseOptions(argv[1:])
+    except usage.UsageError, e:
+        print str(o)
+        print str(e)
+        return 1
+
+    return 0
+
+
+if __name__ == '__main__': sys.exit(run())
+
