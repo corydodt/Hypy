@@ -25,7 +25,7 @@ tests:
 release:
 	bash -c '([ -n "$(tag)" ] && true) || (echo "** Use: make tag=xx.xx.xx release"; false)'
 	-mkdir -p RELEASE
-	$(MAKE) RELEASE/dch-done.txt RELEASE/release-tag-done.txt purge-build-system RELEASE/debuild-done.txt purge-build-system RELEASE/pypi-upload-done.txt
+	$(MAKE) RELEASE/dch-done.txt RELEASE/release-tag-done.txt RELEASE/debuild-done.txt RELEASE/pypi-upload-done.txt
 
 RELEASE/dch-done.txt: msg = "This will update your changelog - type in new release notes and update version $(tag).txt. ^C to cancel"
 RELEASE/dch-done.txt:
@@ -52,15 +52,17 @@ doc/release-notes/$(tag).txt:
 	vim doc/release-notes/$(tag).txt
 
 # remove old versions of hypy to setup for release compliance testing
-purge-build-system: msg = "This will REMOVE all system copies of Hypy.  ^C to cancel"
-purge-build-system:
-	@read -p $(msg) x
-	sudo apt-get remove python-hypy
-	sudo rm -rf /usr/lib/python*/[hH]ypy
-	sudo rm -rvf /usr/lib/python*/[hH]ypy.pth
+define purge-build-system
+msg = "This will REMOVE all system copies of Hypy.  ^C to cancel"
+@read -p $(msg) x
+sudo apt-get remove python-hypy
+sudo rm -rf /usr/lib/python*/[hH]ypy
+sudo rm -rvf /usr/lib/python*/[hH]ypy.pth
+endef
 
 RELEASE/debuild-done.txt: PNAME := python-hypy-"$(tag)"
 RELEASE/debuild-done.txt:
+	$(purge-build-system)
 	-rm -rf RELEASE/$(PNAME) RELEASE/python-hypy*
 	hg archive -t files RELEASE/$(PNAME)
 	cp -v Makefile RELEASE/
@@ -79,9 +81,12 @@ debuild:
 
 RELEASE/pypi-upload-done.txt: msg = "This will UPLOAD your sdist to pypi.  ^C to cancel"
 RELEASE/pypi-upload-done.txt:
+	$(purge-build-system)
 	@read -p $(msg) x
 	python setup.py sdist upload
-	sudo easy_install hypy
+	# change directories so easy_install doesn't pick up the local 'hypy'
+	# directory
+	cd RELEASE && sudo easy_install hypy
 	$(MAKE) tests
 	touch $@
 
