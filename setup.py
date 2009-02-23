@@ -1,4 +1,8 @@
 #
+import glob
+import os
+import re
+
 try:
     import setuptools
 except ImportError:
@@ -6,6 +10,26 @@ except ImportError:
     use_setuptools()
 
 from setuptools import setup, Extension, find_packages
+
+
+VERRX = re.compile(r'((\d+\.)+\d)\.txt$')
+
+def versionFromReleaseNotes():
+    """
+    Hypy's official version is the latest version of the release notes found
+    in doc/release-notes.
+    """
+    thisDir = os.path.abspath(__file__).rsplit(os.sep, 1)[0]
+    if thisDir == __file__:
+        thisDir = os.path.abspath
+
+    versions = glob.glob(os.sep.join(
+        [thisDir, 'doc', 'release-notes', '[0-9]*.txt']))
+    if versions:
+        return VERRX.search(max(versions)).group(1)
+    else:
+        return 'VERSION_NOT_FOUND'
+
 
 ext = Extension("_estraiernative",
                 ["estraiernative.c"],
@@ -22,7 +46,7 @@ setup(
         maintainer_email='pypi@spam.goonmill.org',
         url='http://goonmill.org/hypy/',
         download_url='http://hypy-source.goonmill.org/archive/tip.tar.gz',
-        version="0.8.2", 
+        version=versionFromReleaseNotes(),
         ext_modules=[ext],
         zip_safe=False,
         packages=find_packages(),
