@@ -61,9 +61,10 @@ purge-build-system:
 
 RELEASE/debuild-done.txt: PNAME := python-hypy-"$(tag)"
 RELEASE/debuild-done.txt:
+	-rm -rf RELEASE/$(PNAME)
 	hg archive -t files RELEASE/$(PNAME)
 	cp -v Makefile RELEASE/
-	$(MAKE) -C RELEASE debuild
+	$(MAKE) -C RELEASE PNAME=$(PNAME) debuild
 	touch $@
 
 debuild: msg = "This will build a debian package and then INSTALL it.  ^C to cancel"
