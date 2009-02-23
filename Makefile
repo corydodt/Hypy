@@ -53,8 +53,7 @@ doc/release-notes/$(tag).txt:
 
 # remove old versions of hypy to setup for release compliance testing
 define purge-build-system
-msg = "This will REMOVE all system copies of Hypy.  ^C to cancel"
-@read -p $(msg) x
+@read -p "This will REMOVE all system copies of Hypy.  ^C to cancel" x
 sudo apt-get remove python-hypy
 sudo rm -rf /usr/lib/python*/[hH]ypy
 sudo rm -rvf /usr/lib/python*/[hH]ypy.pth
