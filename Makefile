@@ -23,7 +23,7 @@ tests:
 	python -m hypy.test_lib
 
 release:
-	bash -c '([ -n "$(tag)" ] && true) || (echo "** Use: make release tag=xx.xx.xx"; false)'
+	bash -c '([ -n "$(tag)" ] && true) || (echo "** Use: make tag=xx.xx.xx release"; false)'
 	$(MAKE) changelog release-tag purge-build-system debuild-setup purge-build-system pypi-upload
 
 changelog: msg = "This will update your changelog - type in new release notes and update version $(tag).txt. ^C to cancel"
@@ -31,12 +31,15 @@ changelog:
 	@read -p $(msg) x
 	dch -i
 
-release-tag: "This will COMMIT doc/release-notes/$(tag).txt and tag the release. ^C to cancel"
+release-tag: "This will COMMIT doc/release-notes/$(tag).txt and tag the release, and push changes. ^C to cancel"
 release-tag: release-notes
 	@read $(msg) x
 	hg add doc/release-notes/$(tag).txt
 	hg ci -m "releasing $(tag)" doc/release-notes/$(tag).txt debian/changelog
+	@echo '!! This fetch might require a merge resolution.  Cancelling the merge will stop the release, but you probably wanted to anyway.'
+	hg fetch
 	hg tag $(tag)
+	hg push
 
 release-notes: msg = "This will update your release notes - type in new release notes and update version $(tag). ^C to cancel"
 release-notes:
