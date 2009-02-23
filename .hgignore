@@ -10,3 +10,4 @@ _temp_db/.*
 dist/.*
 changelog.dch
 .*.txt.html
+RELEASE

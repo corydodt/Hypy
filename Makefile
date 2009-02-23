@@ -24,7 +24,7 @@ tests:
 
 release:
 	bash -c '([ -n "$(tag)" ] && true) || (echo "** Use: make tag=xx.xx.xx release"; false)'
-	mkdir RELEASE
+	-mkdir -p RELEASE
 	$(MAKE) RELEASE/dch-done.txt RELEASE/release-tag-done.txt purge-build-system RELEASE/debuild-done.txt purge-build-system RELEASE/pypi-upload-done.txt
 
 RELEASE/dch-done.txt: msg = "This will update your changelog - type in new release notes and update version $(tag).txt. ^C to cancel"
@@ -61,7 +61,7 @@ purge-build-system:
 
 RELEASE/debuild-done.txt: PNAME := python-hypy-"$(tag)"
 RELEASE/debuild-done.txt:
-	-rm -rf RELEASE/$(PNAME)
+	-rm -rf RELEASE/$(PNAME) RELEASE/python-hypy*
 	hg archive -t files RELEASE/$(PNAME)
 	cp -v Makefile RELEASE/
 	$(MAKE) -C RELEASE PNAME=$(PNAME) debuild
@@ -74,7 +74,7 @@ debuild:
 		cd $(PNAME) && debuild
 		sudo dpkg -i python-hypy*.deb
 		$(MAKE) tests
-		cd $(PNAME) debuild -S
+		cd $(PNAME) && debuild -S
 		dput launchpad 'python-hypy_'${tag}'~ppa1_source.changes'
 
 RELEASE/pypi-upload-done.txt: msg = "This will UPLOAD your sdist to pypi.  ^C to cancel"
