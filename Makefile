@@ -29,12 +29,12 @@ release:
 changelog: msg = "This will update your changelog - type in new release notes and update version $(tag).txt. ^C to cancel"
 changelog:
 	@read -p $(msg) x
-	-commit-popup
+	-@./commit-popup
 	dch -i
 
-release-tag: "This will COMMIT doc/release-notes/$(tag).txt and tag the release, and push changes. ^C to cancel"
-release-tag: release-notes
-	@read $(msg) x
+release-tag: msg = "This will COMMIT doc/release-notes/$(tag).txt and tag the release, and push changes. ^C to cancel"
+release-tag: doc/release-notes/$(tag).txt
+	@read -p $(msg) x
 	hg add doc/release-notes/$(tag).txt
 	hg ci -m "releasing $(tag)" doc/release-notes/$(tag).txt debian/changelog
 	@echo '!! This fetch might require a merge resolution.  Cancelling the merge will stop the release, but you probably wanted to anyway.'
@@ -42,16 +42,16 @@ release-tag: release-notes
 	hg tag $(tag)
 	hg push
 
-release-notes: msg = "This will update your release notes - type in new release notes and update version $(tag). ^C to cancel"
-release-notes:
-	@read $(msg) x
+doc/release-notes/$(tag).txt: msg = "This will update your release notes - type in new release notes and update version $(tag). ^C to cancel"
+doc/release-notes/$(tag).txt:
+	@read -p $(msg) x
 	cp doc/release-notes/template.txt doc/release-notes/$(tag).txt
 	vim doc/release-notes/$(tag).txt
 
 # remove old versions of hypy to setup for release compliance testing
 purge-build-system: msg = "This will REMOVE all system copies of Hypy.  ^C to cancel"
 purge-build-system:
-	@read $(msg) x
+	@read -p $(msg) x
 	sudo apt-get remove python-hypy
 	sudo rm -rf /usr/lib/python*/[hH]ypy
 	sudo rm -rvf /usr/lib/python*/[hH]ypy.pth
@@ -64,7 +64,7 @@ debuild-setup:
 
 debuild: msg = "This will build a debian package and then INSTALL it.  ^C to cancel"
 debuild:
-		@read $(msg) x
+		@read -p $(msg) x
 		tar cvfz $(PNAME).tar.gz $(PNAME)/
 		cd $(PNAME) && debuild
 		sudo dpkg -i python-hypy*.deb
@@ -74,7 +74,7 @@ debuild:
 
 pypi-upload: msg = "This will UPLOAD your sdist to pypi.  ^C to cancel"
 pypi-upload:
-	@read $(msg) x
+	@read -p $(msg) x
 	python setup.py sdist upload
 	sudo easy_install hypy
 	$(MAKE) tests
