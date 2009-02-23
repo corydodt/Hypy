@@ -90,4 +90,4 @@ RELEASE/pypi-upload-done.txt:
 	touch $@
 
 clean:
-	rm -rf build dist Hypy.egg-info RELEASE
+	rm -rf build dist Hypy.egg-info RELEASE _temp_db
