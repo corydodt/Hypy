@@ -1,3 +1,17 @@
+python-hypy (0.8.3~ppa1) intrepid; urgency=low
+
+  * Massively improved docstrings and internal documentation.  An extensive
+    examples document is now available at
+    http://goonmill.org/hypy/examples.tsw (closes: #321683)
+
+  * Filter out null bytes while indexing. (closes: #321579)
+
+  * Improve performance of attribute searches. (closes: #321181)
+
+  * Add a teaser rst format i.e. **foo** (closes: #329585)
+ 
+ -- Cory Dodt <launchpad@spam.goonmill.org>  Sun, 22 Feb 2009 21:33:56 -0800
+
 python-hypy (0.8.2~ppa1) hardy; urgency=low
 
   * fix the ez_setup import which made it hard to easy_install 
