@@ -13,9 +13,8 @@ Hypy
 
 .. sidebar:: Docs
 
-    `Reference (API) documentation <http://goonmill.org/hypy/apidocs/>`_.   Or
-    maybe `Quick Start`_ (below on this page).  You probably want the
-    `examples`_ though, knowing you.
+    `Reference (API) documentation <http://goonmill.org/hypy/apidocs/>`_.
+    You probably want the `examples`_ though, knowing you.
 
 .. sidebar:: Discuss
 
