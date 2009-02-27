@@ -17,7 +17,12 @@ Hypy
     maybe `Quick Start`_ (below on this page).  You probably want the
     `examples`_ though, knowing you.
 
+.. sidebar:: Discuss
+
+    Hypy now has a Google Group called hypy-discuss_.
+
 .. _examples: examples.tsw
+.. _hypy-discuss: http://groups.google.com/group/hypy-discuss
 
 .. image:: /static/hypylogo.png
 
