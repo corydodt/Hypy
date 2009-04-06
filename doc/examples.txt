@@ -63,7 +63,7 @@ assumptions of the example you're interested in.
 Open a Database
 ---------------
 
-A index, or database, has to be created before it can be used.  It creates a
+An index, or database, has to be created before it can be used.  It creates a
 disk directory at the spot you tell it.  When re-opened, you must give it the
 location of the same directory.
 
@@ -298,7 +298,7 @@ Search, and Read Results
 
 Say, now that we now how to weight documents for search, how do you search,
 anyway?  Simple: construct a condition, and use ``db.search(condition)``.
-Results are list-like
+Results are list-like.
 ::
 
     cond = HCondition(u'eggs')
