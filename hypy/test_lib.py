@@ -197,6 +197,15 @@ class TestDatabase(unittest.TestCase):
             self.assertFalse(dbdocxx is dbdocxx2)
             self.assertEqual(dbdocxx2.get(u'zz'), u'hello')
 
+    def test_removeURINone(self):
+        """
+        #356253: should be able to explicitly say "uri=None" when calling remove
+        """
+        with self.freshenDatabase() as db:
+            # this is odd, but it should work
+            db.remove(id=1, uri=None)
+
+
     def test_removeNulls(self):
         """
         Bug 321579: nulls should not kill addText
@@ -287,6 +296,9 @@ class TestDatabase(unittest.TestCase):
             # attribute conditions
             cc = HCondition(u'*.**')
             self.assertRaises(TypeError, cc.addAttr, 'xxx')
+
+            # None as a kwarg should work (bug #356253)
+            c2 = HCondition(phrase=None)
 
             def attrSearch(expr, order=None, phrase=None):
                 if phrase:

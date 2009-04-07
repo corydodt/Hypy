@@ -66,8 +66,10 @@ class CloseFailed(Exception):
 
 def enforceUnicode(s, argName, exceptionClass, encoding='utf8'):
     """
-    Force s to be a unicode object; return a byte string
+    Force s to be a unicode object or None; return a byte string
     """
+    if s is None:
+        return None
     if not type(s) is unicode:
         raise exceptionClass('%s must be unicode' % (argName,))
     return s.encode(encoding)
