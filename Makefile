@@ -22,8 +22,9 @@ website:
 tests:
 	python -m hypy.test_lib
 
+release: msg = "** Use: make tag=xx.xx.xx release"
 release:
-	bash -c '([ -n "$(tag)" ] && true) || (echo "** Use: make tag=xx.xx.xx release"; false)'
+	@bash -c '([ -n "$(tag)" ] && true) || (echo $(msg); false)'
 	-mkdir -p RELEASE
 	$(MAKE) RELEASE/dch-done.txt RELEASE/release-tag-done.txt RELEASE/debuild-done.txt RELEASE/pypi-upload-done.txt
 
