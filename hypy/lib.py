@@ -15,53 +15,53 @@ class FlushFailed(Exception):
     """
     Could not remove the specified doc from the database.
     """
-    def __init__(self, message):
-        self.message = message
+    def __init__(self, msg):
+        self.msg = msg
 
     def __str__(self):
-        return self.message
+        return self.msg
 
 class EditFailed(Exception):
     """
     Could not edit the specified doc in the database
     """
-    def __init__(self, id, message):
+    def __init__(self, id, msg):
         self.id = id
-        self.message = message
+        self.msg = msg
 
     def __str__(self):
-        return 'Document %s: %s' % (self.id, self.message)
+        return 'Document %s: %s' % (self.id, self.msg)
 
 class PutFailed(Exception):
     """
     Could not add the specified doc to the database.
     """
-    def __init__(self, uri, message):
+    def __init__(self, uri, msg):
         self.uri = uri
-        self.message = message
+        self.msg = msg
 
     def __str__(self):
-        return 'Document %s: %s' % (self.uri, self.message)
+        return 'Document %s: %s' % (self.uri, self.msg)
 
 class OpenFailed(Exception):
     """
     Could not open the database with the specified mode.
     """
-    def __init__(self, message):
-        self.message = message
+    def __init__(self, *args):
+        self.msg = args[0]
 
     def __str__(self):
-        return self.message
+        return self.msg
 
 class CloseFailed(Exception):
     """
     Could not close the database.
     """
-    def __init__(self, message):
-        self.message = message
+    def __init__(self, msg):
+        self.msg = msg
 
     def __str__(self):
-        return self.message
+        return self.msg
 
 
 def enforceUnicode(s, argName, exceptionClass, encoding='utf8'):
