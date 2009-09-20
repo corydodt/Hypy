@@ -88,6 +88,7 @@ RELEASE/pypi-upload-done.txt:
 	# change directories so easy_install doesn't pick up the local 'hypy'
 	# directory
 	cd RELEASE && sudo easy_install hypy
+	python -c 'from hypy import __version__ as v; assert v=="'$(tag)'"'
 	$(MAKE) tests
 	touch $@
 
