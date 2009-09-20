@@ -1,3 +1,6 @@
+all:
+	@echo "** Try make tests (to run tests) or make release (to do a release) or make start (to run hg serve)"
+	@false
 
 start:
 	hg serve --daemon --port 28090 --pid-file hgserve.pid
@@ -28,7 +31,7 @@ release:
 	-mkdir -p RELEASE
 	$(MAKE) RELEASE/dch-done.txt RELEASE/release-tag-done.txt RELEASE/debuild-done.txt RELEASE/pypi-upload-done.txt
 
-RELEASE/dch-done.txt: msg = "This will update your changelog - type in new release notes and update version $(tag).txt. ^C to cancel"
+RELEASE/dch-done.txt: msg = "This will update your changelog - type in new changes and update version $(tag).txt. ^C to cancel"
 RELEASE/dch-done.txt:
 	@read -p $(msg) x
 	-@./commit-popup
