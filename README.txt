@@ -8,7 +8,7 @@ Hypy
     official release`_.
 
 .. _latest source: http://hypy-source.goonmill.org/archive/tip.tar.gz
-.. _latest official release: http://pypi.python.org/pypi/Hypy/0.8.2
+.. _latest official release: http://pypi.python.org/pypi/Hypy/
 .. _browse the source: http://hypy-source.goonmill.org/file/tip/
 
 .. sidebar:: Docs
