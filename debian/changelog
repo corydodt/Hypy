@@ -1,3 +1,12 @@
+python-hypy (0.8.4~ppa1) karmic; urgency=low
+
+  * You can now create an HCondition with None for the search phrase (closes:
+    #356253)
+
+  * Improvements in the release testing (closes: #335481)
+
+ -- cory <launchpad@spam.goonmill.org>  Sat, 19 Sep 2009 23:33:51 -0700
+
 python-hypy (0.8.3~ppa1) intrepid; urgency=low
 
   * Massively improved docstrings and internal documentation.  An extensive

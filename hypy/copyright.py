@@ -1,9 +1,11 @@
 """
 Hypy is copyright (c) 2009 Cory Dodt.
+
+GENERATED FILE -- DO NOT EDIT
 """
 from datetime import date
 
 author = "Cory Dodt"
-releaseDate = date(1970, 1, 1)
-releaseRevision = "000000000000"
-__version__ = "n/a"
+releaseDate = "2009-09-19"
+releaseRevision = "c2bc8603fa86+"
+__version__ = "0.8.4"
