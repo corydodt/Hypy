@@ -111,20 +111,13 @@ installation page for details.
 
 .. _installing Hyper Estraier: http://hyperestraier.sourceforge.net/intro-en.html#installation
 
-Then: Install Hypy with easy_install or pip
-===========================================
+Then: Install Hypy with easy_install
+====================================
 With setuptools (Ubuntu: sudo apt-get install python-setuptools), you can
 install Hypy without even downloading it first, by using
 ::
 
     sudo easy_install hypy
-
-If you have pip_, you should use that
-::
-
-    sudo pip install hypy
-
-.. _pip: http://pip.openplans.org/
 
 
 ... or: Install Hypy from tarball
