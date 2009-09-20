@@ -45,17 +45,17 @@ Add the following lines to the end of ``/etc/apt/sources.list``.  You can
 also paste these lines in to System > Administration > Software Sources >
 Third-Party Software.
 
-(intrepid)
+(jaunty)
+::
+
+    deb http://ppa.launchpad.net/corydodt/ubuntu jaunty main
+    deb-src http://ppa.launchpad.net/corydodt/ubuntu jaunty main
+
+(or intrepid)
 ::
 
     deb http://ppa.launchpad.net/corydodt/ppa/ubuntu intrepid main
     deb-src http://ppa.launchpad.net/corydodt/ppa/ubuntu intrepid main
-
-(or hardy)
-::
-
-    deb http://ppa.launchpad.net/corydodt/ubuntu hardy main
-    deb-src http://ppa.launchpad.net/corydodt/ubuntu hardy main
 
 Then::
 
