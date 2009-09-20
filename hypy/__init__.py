@@ -1,5 +1,5 @@
 """Hypy - Pythonic Hyper Estraier"""
-from .lib import (PutFailed,
+from hypy.lib import (PutFailed,
     OpenFailed,
     CloseFailed,
     EditFailed,
@@ -10,3 +10,5 @@ from .lib import (PutFailed,
     HDocument,
     HHit,
     )
+
+from hypy.copyright import __version__

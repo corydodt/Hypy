@@ -205,7 +205,6 @@ class TestDatabase(unittest.TestCase):
             # this is odd, but it should work
             db.remove(id=1, uri=None)
 
-
     def test_removeNulls(self):
         """
         Bug 321579: nulls should not kill addText
@@ -445,6 +444,23 @@ class TestDatabase(unittest.TestCase):
         # autoflush: now you can.
         with setup(autoflush=True) as db:
             self.assertEqual(len(db.search(cond)), 1)
+
+
+class TestMisc(unittest.TestCase):
+    """
+    Test misc. features of the package such as version string
+    """
+    def test_version(self):
+        """
+        __version__ and other release info can be found in copyright.py and
+        __init__.py
+
+        This doesn't really verify that copyright.py is generated correctly,
+        just that it exists and has the right contents.
+        """
+        from hypy import __version__ as version1
+        from hypy.copyright import __version__ as version2
+        self.assertEqual(version1, version2)
 
 
 if __name__ == '__main__':
