@@ -83,7 +83,8 @@ debuild:
 	sudo dpkg -i python-hypy*.deb
 	$(MAKE) tests
 	cd $(PNAME) && debuild -S
-	dput launchpad 'python-hypy_'${tag}'~ppa1_source.changes'
+	ver=`dpkg-parsechangelog | sed -n 's/Version: \(.*\)/\1/p'`; \
+		dput launchpad 'python-hypy_'${var}'_source.changes'
 
 RELEASE/pypi-upload-done.txt: msg = "This will UPLOAD your sdist to pypi.  ^C to cancel"
 RELEASE/pypi-upload-done.txt:
