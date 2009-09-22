@@ -34,14 +34,14 @@ release:
 RELEASE/dch-done.txt: msg = "This will update your changelog - type in new changes and update version $(tag).txt. ^C to cancel"
 RELEASE/dch-done.txt:
 	@read -p $(msg) x
-	-@./commit-popup
+	-@./build-tools/commit-popup
 	dch -i
 	touch $@
 
 RELEASE/release-tag-done.txt: msg = "This will COMMIT hypy/copyright.py and doc/release-notes/$(tag).txt and tag the release, and push changes. ^C to cancel"
 RELEASE/release-tag-done.txt: doc/release-notes/$(tag).txt
 	@read -p $(msg) x
-	python updatecopyright.py $(tag)
+	./build-tools/update-copyright $(tag)
 	hg add doc/release-notes/$(tag).txt
 	hg ci -m "releasing $(tag)" hypy/copyright.py doc/release-notes/$(tag).txt debian/changelog
 	@echo '!! This fetch might require a merge resolution.  Cancelling the merge will stop the release, but you probably wanted to anyway.'
