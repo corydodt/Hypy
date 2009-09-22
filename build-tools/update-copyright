@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Overwrite copyright.py when doing a release
 """
@@ -7,6 +8,8 @@ import datetime
 import os.path
 from mercurial import ui, hg, commands
 
+dn = os.path.dirname
+
 def run(argv=None):
     if argv is None:
         argv = sys.argv[:]
@@ -15,7 +18,7 @@ def run(argv=None):
 
     releaseDate = datetime.date.today().isoformat()
 
-    d = os.path.abspath(os.path.dirname(__file__))
+    d = os.path.abspath(dn(dn(__file__)))
     hgui = ui.ui(quiet=True)
     hgui.pushbuffer()
     hgrepo = hg.repository(ui=hgui, path=d)
