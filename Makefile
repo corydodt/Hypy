@@ -75,13 +75,13 @@ RELEASE/debuild-done.txt:
 
 debuild: msg = "This will build a debian package and then INSTALL it.  ^C to cancel"
 debuild:
-		@read -p $(msg) x
-		tar cvfz $(PNAME).tar.gz $(PNAME)/
-		cd $(PNAME) && debuild
-		sudo dpkg -i python-hypy*.deb
-		$(MAKE) tests
-		cd $(PNAME) && debuild -S
-		dput launchpad 'python-hypy_'${tag}'~ppa1_source.changes'
+	@read -p $(msg) x
+	tar cvfz $(PNAME).tar.gz $(PNAME)/
+	cd $(PNAME) && debuild
+	sudo dpkg -i python-hypy*.deb
+	$(MAKE) tests
+	cd $(PNAME) && debuild -S
+	dput launchpad 'python-hypy_'${tag}'~ppa1_source.changes'
 
 RELEASE/pypi-upload-done.txt: msg = "This will UPLOAD your sdist to pypi.  ^C to cancel"
 RELEASE/pypi-upload-done.txt:
