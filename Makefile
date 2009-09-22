@@ -71,6 +71,8 @@ RELEASE/debuild-done.txt:
 	hg archive -t files RELEASE/$(PNAME)
 	cp -v Makefile RELEASE/
 	$(MAKE) -C RELEASE PNAME=$(PNAME) debuild
+	# wait for packages to build
+	./build-tools/lptool -u launchpad@spam.goonmill.org w "${tag}"
 	touch $@
 
 debuild: msg = "This will build a debian package and then INSTALL it.  ^C to cancel"

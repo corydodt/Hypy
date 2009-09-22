@@ -1,0 +1,185 @@
+#!/usr/bin/env python
+"""
+Watch the PPA building the python packages after upload
+"""
+import sys, os
+import time
+
+from twisted.python import usage
+
+from launchpadlib.credentials import Credentials
+from launchpadlib.launchpad import Launchpad, STAGING_SERVICE_ROOT, EDGE_SERVICE_ROOT
+
+CLIENTNAME = 'Hypy LPTool'
+
+
+class CannotWait(Exception):
+    """
+    WaitBuilding failed because there was a timeout OR the packages did not
+    enter a completed state OR the packages weren't even being built.
+    """
+
+
+class AuthorizedCommand(usage.Options):
+    """
+    A subcommand that relies on launchpad authorization
+    """
+    def postOptions(self):
+        if self.parent['lpuser'] is None:
+            raise usage.UsageError("** Must provide -u EMAIL parameter to log into launchpad.net")
+
+        if self.parent['staging']:
+            self['rooturi'] = STAGING_SERVICE_ROOT
+            credFilename = self.parent['lpuser'] + '@staging'
+        else:
+            self['rooturi'] = EDGE_SERVICE_ROOT
+            credFilename = self.parent['lpuser'] + '@edge'
+
+        credentials = Credentials()
+        credentials.load(open(os.path.expanduser("~/.launchpadlib/%s" %
+            (credFilename,))))
+        cachedir = os.path.expanduser("~/.launchpadlib/cache")
+        self.launchpad = Launchpad(credentials, self['rooturi'], cachedir)
+
+
+class WaitBuilding(AuthorizedCommand):
+    """
+    Wait for a source build to complete
+    """
+    synopsis = "VERSION"
+
+    optParameters = [["timeout", "t", 15, "Time, in minutes, to wait for successful builds"],
+    ]
+
+    def parseArgs(self, version):
+        self['version'] = version
+
+    def postOptions(self):
+        AuthorizedCommand.postOptions(self)
+        self['timeout'] = int(self['timeout'])
+
+        prj = self.launchpad.projects["hypy"]
+        person = self.launchpad.people.getByEmail(email=self.parent['lpuser'])
+        ppa = person.getPPAByName(name="ppa")
+        bins = ppa.getPublishedBinaries()
+        for x in range(0, self['timeout']):
+            # these counts are for packages with version equal to
+            # self['version']
+            builtCount = 0  # number of binary packages that are fully built
+            builtCountNeeded = 0  # total number of binary packages being built
+            pendingCount = 0
+            for b in bins:
+                if b.status == 'Deleted':
+                    continue
+
+                # we assume that the most recent build will be the first item in
+                # the list, therefore we can save time by not looking at any
+                # later items once we've seen all the ones that have the same
+                # version
+                if b.binary_package_version != self['version']:
+                    break
+                builtCountNeeded += 1
+
+                print b.distro_arch_series_link, b.status
+
+                if b.status == "Published" or b.status == 'Superseded':
+                    builtCount += 1
+                elif b.status == "Pending":
+                    pendingCount += 1
+
+            if builtCountNeeded == 0:
+                raise CannotWait(
+                        "No binary packages, pending or otherwise, were at version %s (try adding ~ppa1?)" % (
+                            self['version'],))
+
+            if pendingCount == 0:
+                if builtCount != builtCountNeeded:
+                    raise CannotWait("couldn't get all %s packages published" % (
+                        builtCount,))
+                break
+            else:
+                print "%s/%s packages finished.  Waiting 60s..." % (builtCount, builtCountNeeded)
+            time.sleep(60)
+        else:
+            raise CannotWait("timed out after %s minutes" % (self['timeout'],))
+
+
+class CopyBinaries(AuthorizedCommand):
+    """
+    Sync packages in the PPA between two dists
+    """
+    def postOptions(self):
+        AuthorizedCommand.postOptions(self)
+        TODO
+
+
+class NewAuth(usage.Options):
+    """
+    Create a new set of credentials, writing it to stdout
+    """
+    def postOptions(self):
+        if self.parent['staging']:
+            self['rooturi'] = STAGING_SERVICE_ROOT
+        else:
+            self['rooturi'] = EDGE_SERVICE_ROOT
+
+        try:
+            real_stdout = sys.stdout
+            sys.stdout = sys.stderr
+            cachedir = os.path.expanduser("~/.launchpadlib/cache")
+            launchpad = Launchpad.get_token_and_login(CLIENTNAME,
+                    self['rooturi'], cachedir)
+        finally:
+            sys.stdout = real_stdout
+
+        launchpad.credentials.save(sys.stdout)
+
+
+class Options(usage.Options):
+    synopsis = "lptool"
+    optParameters = [
+        ['lpuser', 'u', None, "Email address of a user authorized on launchpad"],
+    ]
+
+    optFlags = [
+        ['staging', 'S', 'Use the staging (demo) area'],
+    ]
+
+    subCommands = [
+        ["wait-building", "w", WaitBuilding, 
+            "Wait for an uploaded package to finish building"],
+        ["copy-binaries", "c", CopyBinaries, 
+            "Copy built packages from one dist to another"],
+        ["new-auth", None, NewAuth, 
+            "Create a new set of credentials, writing it to stdout"],
+        ]
+
+    def postOptions(self):
+        """Recommended if there are subcommands:"""
+        if self.subCommand is None:
+            self.synopsis = "lptool <subcommand>"
+            raise usage.UsageError("** Please specify a subcommand (see \"Commands\").")
+
+
+def run(argv=None):
+    if argv is None:
+        argv = sys.argv
+    o = Options()
+    try:
+        o.parseOptions(argv[1:])
+    except usage.UsageError, e:
+        if hasattr(o, 'subOptions'):
+            print str(o.subOptions)
+        else:
+            print str(o)
+        print str(e)
+        return 1
+    except CannotWait, e:
+        print "** wait-building failed:", e.args[0]
+        return 1
+
+    return 0
+
+
+if __name__ == '__main__': sys.exit(run())
+
