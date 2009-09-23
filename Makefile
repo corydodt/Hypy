@@ -91,7 +91,7 @@ RELEASE/dput-done.txt: msg = "This will UPLOAD the package to a PPA using dput. 
 RELEASE/dput-done.txt:
 	$(dver); cd RELEASE; dput launchpad 'python-hypy_'$$dver'_source.changes'
 	# wait for packages to build
-	$(dver); ./build-tools/lptool -u launchpad@spam.goonmill.org w $$dver
+	$(dver); ./build-tools/lptool -u launchpad@spam.goonmill.org w --timeout 35 $$dver
 	touch $@
 
 RELEASE/pypi-upload-done.txt: msg = "This will UPLOAD your sdist to pypi.  ^C to cancel"
