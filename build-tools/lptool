@@ -11,7 +11,9 @@ from launchpadlib.credentials import Credentials
 from launchpadlib.launchpad import Launchpad, STAGING_SERVICE_ROOT, EDGE_SERVICE_ROOT
 
 CLIENTNAME = 'Hypy LPTool'
-PACKAGENAME = "python-hypy"
+PACKAGE = "python-hypy"
+PPA = "ppa"
+POCKET = "Release"
 
 
 class CannotWait(Exception):
@@ -59,15 +61,14 @@ class WaitBuilding(AuthorizedCommand):
         AuthorizedCommand.postOptions(self)
         self['timeout'] = int(self['timeout'])
 
-        prj = self.launchpad.projects["hypy"]
         person = self.launchpad.people.getByEmail(email=self.parent['lpuser'])
-        ppa = person.getPPAByName(name="ppa")
+        ppa = person.getPPAByName(name=PPA)
 
         # first wait for the package to be accepted, by waiting for the source
         # to appear
         for x in range(0, self['timeout']*3):
             sources = ppa.getPublishedSources(version=self['version'], 
-                    source_name=PACKAGENAME)
+                    source_name=PACKAGE)
             try:
                 sources[0]
                 print "Package was accepted."
@@ -121,9 +122,24 @@ class CopyBinaries(AuthorizedCommand):
     """
     Sync packages in the PPA between two dists
     """
+    optParameters = [["to", "t", None, "Dist to copy packages to"],
+            ]
+    
+    def parseArgs(self, version):
+        self['version'] = version
+
     def postOptions(self):
         AuthorizedCommand.postOptions(self)
-        TODO
+        person = self.launchpad.people.getByEmail(email=self.parent['lpuser'])
+        ppa = person.getPPAByName(name=PPA)
+        ppa.syncSource(from_archive=ppa, 
+                include_binaries=True,
+                source_name=PACKAGE, 
+                to_series=self['to'],
+                to_pocket=POCKET,
+                version=self['version']
+                )
+        print "synced %s %s to %s" % (PACKAGE, self['version'], self['to'])
 
 
 class NewAuth(usage.Options):

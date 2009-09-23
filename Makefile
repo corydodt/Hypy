@@ -87,11 +87,12 @@ debuild:
 	$(MAKE) tests
 	cd $(PNAME) && debuild -S -sa
 
-RELEASE/dput-done.txt: msg = "This will UPLOAD the package to a PPA using dput. ^C to cancel"
+RELEASE/dput-done.txt: msg = "This will DPUT the package, wait for build, then COPY sources. ^C to cancel"
 RELEASE/dput-done.txt:
 	$(dver); cd RELEASE; dput launchpad 'python-hypy_'$$dver'_source.changes'
 	# wait for packages to build
 	$(dver); ./build-tools/lptool -u launchpad@spam.goonmill.org w --timeout 35 $$dver
+	$(dver); ./build-tools/lptool -u launchpad@spam.goonmill.org c --to jaunty $$dver
 	touch $@
 
 RELEASE/pypi-upload-done.txt: msg = "This will UPLOAD your sdist to pypi.  ^C to cancel"
