@@ -11,6 +11,7 @@ from launchpadlib.credentials import Credentials
 from launchpadlib.launchpad import Launchpad, STAGING_SERVICE_ROOT, EDGE_SERVICE_ROOT
 
 CLIENTNAME = 'Hypy LPTool'
+PACKAGENAME = "python-hypy"
 
 
 class CannotWait(Exception):
@@ -61,44 +62,56 @@ class WaitBuilding(AuthorizedCommand):
         prj = self.launchpad.projects["hypy"]
         person = self.launchpad.people.getByEmail(email=self.parent['lpuser'])
         ppa = person.getPPAByName(name="ppa")
-        bins = ppa.getPublishedBinaries()
-        for x in range(0, self['timeout']):
-            # these counts are for packages with version equal to
-            # self['version']
-            builtCount = 0  # number of binary packages that are fully built
-            builtCountNeeded = 0  # total number of binary packages being built
-            pendingCount = 0
-            for b in bins:
-                if b.status == 'Deleted':
-                    continue
 
-                # we assume that the most recent build will be the first item in
-                # the list, therefore we can save time by not looking at any
-                # later items once we've seen all the ones that have the same
-                # version
-                if b.binary_package_version != self['version']:
-                    break
-                builtCountNeeded += 1
-
-                print b.distro_arch_series_link, b.status
-
-                if b.status == "Published" or b.status == 'Superseded':
-                    builtCount += 1
-                elif b.status == "Pending":
-                    pendingCount += 1
-
-            if builtCountNeeded == 0:
-                raise CannotWait(
-                        "No binary packages, pending or otherwise, were at version %s (try adding ~ppa1?)" % (
-                            self['version'],))
-
-            if pendingCount == 0:
-                if builtCount != builtCountNeeded:
-                    raise CannotWait("couldn't get all %s packages published" % (
-                        builtCount,))
+        # first wait for the package to be accepted, by waiting for the source
+        # to appear
+        for x in range(0, self['timeout']*3):
+            sources = ppa.getPublishedSources(version=self['version'], 
+                    source_name=PACKAGENAME)
+            try:
+                sources[0]
+                print "Package was accepted."
                 break
+            except IndexError:
+                print "Version %s packages not yet accepted by the PPA.  Waiting 20s..." % (self['version'],)
+                time.sleep(20)
+
+        else:
+            raise CannotWait(
+                    "Timed out waiting for packages at version %s to be accepted" %
+                        (self['version'],)
+                        )
+
+        # get the special id off the url; not exposed directly to the API
+        # anywhere
+        sourceId = sources[0].self_link.rsplit('/', 1)[-1]
+
+        # now wait for the packages to be built
+        for x in range(0, self['timeout']):
+            _summaries = ppa.getBuildSummariesForSourceIds(source_ids=sourceId)
+            summary = _summaries[sourceId]
+
+            built = 0
+            needed = len(summary['builds'])
+
+            for build in summary['builds']:
+                if build['datebuilt'] is None:
+                    print "BUILDING:", build['title']
+                else:
+                    built += 1
+
+            if summary['status'] in ["NEEDSBUILD", "BUILDING"]:
+                print "%s/%s packages finished.  Waiting 60s..." % (
+                        built, needed)
             else:
-                print "%s/%s packages finished.  Waiting 60s..." % (builtCount, builtCountNeeded)
+                if summary['status'] == "FULLYBUILT":
+                    print "%s/%s packages were built" % (built, needed)
+                    break
+                print summary['status']
+                for build in summary['builds']:
+                    print build['buildstate'], '-', build['title']
+                raise CannotWait("couldn't get all %s packages published" % (
+                        needed,))
             time.sleep(60)
         else:
             raise CannotWait("timed out after %s minutes" % (self['timeout'],))
