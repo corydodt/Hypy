@@ -29,7 +29,7 @@ release: msg = "** Use: make tag=xx.xx.xx release"
 release:
 	@bash -c '([ -n "$(tag)" ] && true) || (echo $(msg); false)'
 	-mkdir -p RELEASE
-	$(MAKE) RELEASE/dch-done.txt RELEASE/release-tag-done.txt RELEASE/debuild-done.txt RELEASE/pypi-upload-done.txt
+	$(MAKE) RELEASE/dch-done.txt RELEASE/release-tag-done.txt RELEASE/debuild-done.txt RELEASE/dput-done.txt RELEASE/pypi-upload-done.txt
 
 RELEASE/dch-done.txt: msg = "This will update your changelog - type in new changes and update version $(tag).txt. ^C to cancel"
 RELEASE/dch-done.txt:
@@ -71,20 +71,28 @@ RELEASE/debuild-done.txt:
 	hg archive -t files RELEASE/$(PNAME)
 	cp -v Makefile RELEASE/
 	$(MAKE) -C RELEASE PNAME=$(PNAME) debuild
-	# wait for packages to build
-	./build-tools/lptool -u launchpad@spam.goonmill.org w "${tag}"
 	touch $@
+
+define dver
+export dver=`dpkg-parsechangelog | sed -n 's/Version: \(.*\)/\1/p'`
+endef
+
 
 debuild: msg = "This will build a debian package and then INSTALL it.  ^C to cancel"
 debuild:
 	@read -p $(msg) x
 	tar cvfz $(PNAME).tar.gz $(PNAME)/
-	cd $(PNAME) && debuild
+	cd $(PNAME) && debuild -sa
 	sudo dpkg -i python-hypy*.deb
 	$(MAKE) tests
-	cd $(PNAME) && debuild -S
-	dver=`dpkg-parsechangelog | sed -n 's/Version: \(.*\)/\1/p'`; \
-		dput launchpad 'python-hypy_'${dver}'_source.changes'
+	cd $(PNAME) && debuild -S -sa
+
+RELEASE/dput-done.txt: msg = "This will UPLOAD the package to a PPA using dput. ^C to cancel"
+RELEASE/dput-done.txt:
+	$(dver); cd RELEASE; dput launchpad 'python-hypy_'$$dver'_source.changes'
+	# wait for packages to build
+	$(dver); ./build-tools/lptool -u launchpad@spam.goonmill.org w $$dver
+	touch $@
 
 RELEASE/pypi-upload-done.txt: msg = "This will UPLOAD your sdist to pypi.  ^C to cancel"
 RELEASE/pypi-upload-done.txt:
