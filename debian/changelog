@@ -1,3 +1,10 @@
+python-hypy (0.8.4~ppa2) karmic; urgency=low
+
+  * The release process now waits for packages to build, then copies binaries
+    (closes: #333532)
+
+ -- Cory Dodt <launchpad@spam.goonmill.org>  Wed, 23 Sep 2009 08:02:36 -0700
+
 python-hypy (0.8.4~ppa1) karmic; urgency=low
 
   * You can now create an HCondition with None for the search phrase (closes:
