@@ -6,6 +6,6 @@ GENERATED FILE -- DO NOT EDIT
 from datetime import date
 
 author = "Cory Dodt"
-releaseDate = "2009-09-23"
-releaseRevision = "132e07de5116"
-__version__ = "0.8.4"
+releaseDate = "2009-10-09"
+releaseRevision = "a9d32afcd670"
+__version__ = "0.8.4.1"
