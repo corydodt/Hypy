@@ -51,6 +51,10 @@ setup(
         zip_safe=False,
         packages=find_packages(),
 
+        install_requires=[
+            'Distribute>=0.6.3',
+            ],
+
         classifiers=[
           'Development Status :: 4 - Beta',
           'Environment :: Console',
