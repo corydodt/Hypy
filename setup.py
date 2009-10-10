@@ -21,7 +21,7 @@ def versionFromReleaseNotes():
     """
     thisDir = os.path.abspath(__file__).rsplit(os.sep, 1)[0]
     if thisDir == __file__:
-        thisDir = os.path.abspath
+        thisDir = ''
 
     versions = glob.glob(os.sep.join(
         [thisDir, 'doc', 'release-notes', '[0-9]*.txt']))

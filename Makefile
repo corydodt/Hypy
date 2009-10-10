@@ -24,11 +24,10 @@ website:
 tests:
 	python -m hypy.test_lib
 
-ifeq "$(origin tag)" "undefined"
 release:
+ifeq "$(origin tag)" "undefined"
 	$(error Use: make tag=xx.xx.xx release)
 else
-release:
 	-mkdir -p RELEASE
 	$(MAKE) RELEASE/dch-done.txt RELEASE/release-tag-done.txt RELEASE/debuild-done.txt RELEASE/dput-done.txt RELEASE/pypi-upload-done.txt
 endif
