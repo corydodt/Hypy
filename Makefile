@@ -1,6 +1,5 @@
 all:
-	@echo "** Try make tests (to run tests) or make release (to do a release) or make start (to run hg serve)"
-	@false
+	$(error Try make tests (to run tests) or make release (to do a release) or make start (to run hg serve))
 
 start:
 	hg serve --daemon --port 28090 --pid-file hgserve.pid
@@ -25,11 +24,14 @@ website:
 tests:
 	python -m hypy.test_lib
 
-release: msg = "** Use: make tag=xx.xx.xx release"
+ifeq "$(origin tag)" "undefined"
 release:
-	@bash -c '([ -n "$(tag)" ] && true) || (echo $(msg); false)'
+	$(error Use: make tag=xx.xx.xx release)
+else
+release:
 	-mkdir -p RELEASE
 	$(MAKE) RELEASE/dch-done.txt RELEASE/release-tag-done.txt RELEASE/debuild-done.txt RELEASE/dput-done.txt RELEASE/pypi-upload-done.txt
+endif
 
 RELEASE/dch-done.txt: msg = "This will update your changelog - type in new changes and update version $(tag).txt. ^C to cancel"
 RELEASE/dch-done.txt:
