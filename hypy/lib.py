@@ -300,6 +300,11 @@ class HDatabase(object):
         id = self._cdb.uri_to_id(uri)
         return HDocument.fromCDocument(self._cdb.get_doc(id, 0))
 
+    def __iter__(self):
+        cond = HCondition()
+        cond.addAttr(u'@id')
+        return iter(self.search(cond))
+
 
 class HResults(list):
     """
