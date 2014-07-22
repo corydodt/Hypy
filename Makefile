@@ -29,7 +29,8 @@ ifeq "$(origin tag)" "undefined"
 	$(error Use: make tag=xx.xx.xx release)
 else
 	-mkdir -p RELEASE
-	$(MAKE) RELEASE/dch-done.txt RELEASE/release-tag-done.txt RELEASE/debuild-done.txt RELEASE/dput-done.txt RELEASE/pypi-upload-done.txt
+	# $(MAKE) RELEASE/dch-done.txt RELEASE/release-tag-done.txt RELEASE/debuild-done.txt RELEASE/dput-done.txt RELEASE/pypi-upload-done.txt
+	$(MAKE) RELEASE/release-tag-done.txt RELEASE/pypi-upload-done.txt
 endif
 
 RELEASE/dch-done.txt: msg = "This will update your changelog - type in new changes and update version $(tag).txt. ^C to cancel"
@@ -60,7 +61,7 @@ doc/release-notes/$(tag).txt:
 # remove old versions of hypy to setup for release compliance testing
 define purge-build-system
 @read -p "This will REMOVE all system copies of Hypy.  ^C to cancel" x
-sudo apt-get remove python-hypy
+dpkg -l python-hypy | grep ii && sudo apt-get remove python-hypy || true
 sudo rm -rf /usr/lib/python*/[hH]ypy
 sudo rm -rvf /usr/lib/python*/[hH]ypy.pth
 endef
