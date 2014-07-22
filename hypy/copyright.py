@@ -7,5 +7,5 @@ from datetime import date
 
 author = "Cory Dodt"
 releaseDate = "2014-07-22"
-releaseRevision = "56c17f99c381+ tip"
+releaseRevision = "8a5e3832bd7e tip"
 __version__ = "0.8.5"
