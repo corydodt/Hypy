@@ -1,3 +1,9 @@
+python-hypy (0.8.5~ppa1) trusty; urgency=medium
+
+  * Hypy indexes are now iterable 
+
+ -- Cory Dodt <launchpad@spam.goonmill.org>  Tue, 22 Jul 2014 12:08:44 -0700
+
 python-hypy (0.8.4~ppa2) karmic; urgency=low
 
   * The release process now waits for packages to build, then copies binaries
