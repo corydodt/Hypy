@@ -1,12 +1,6 @@
 all:
 	$(error Try make tests (to run tests) or make release (to do a release) or make start (to run hg serve))
 
-start:
-	hg serve --daemon --port 28090 --pid-file hgserve.pid
-
-stop:
-	kill `cat hgserve.pid`
-
 website:
 	rst2html --stylesheet-path=doc/docutils.css README.txt \
 		/var/www/goonmill.org/hypy/index.tsw
