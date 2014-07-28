@@ -11,6 +11,8 @@ except ImportError:
 
 from setuptools import setup, Extension, find_packages
 
+from pkg_resources import parse_version
+
 
 VERRX = re.compile(r'((\d+\.)+\d)\.txt$')
 
@@ -26,7 +28,7 @@ def versionFromReleaseNotes():
     versions = glob.glob(os.sep.join(
         [thisDir, 'doc', 'release-notes', '[0-9]*.txt']))
     if versions:
-        return VERRX.search(max(versions)).group(1)
+        return VERRX.search(max(versions, key=parse_version)).group(1)
     else:
         return 'VERSION_NOT_FOUND'
 
