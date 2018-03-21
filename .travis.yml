@@ -2,7 +2,8 @@ language: python
 python:
   - "2.7"
 # command to install dependencies
-pre_install: "apt-get install -y libestraier-dev"
-install: "pip install tox-travis"
+install:
+- "apt-get install -y libestraier-dev"
+- "pip install tox-travis"
 # command to run tests
 script: tox
