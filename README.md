@@ -24,19 +24,19 @@ installation page for details.
 
 #### Then: Install Hypy with pip
 
-```
+``` bash
 pip install hypy
 ```
 
 ### Running tests
 
-```
+``` bash
 tox
 ```
 
 ### Build/Upload
 
-```
+``` bash
 $ python setup.py sdist bdist_wheel
 $ twine upload dist/*
 ```
@@ -48,7 +48,7 @@ directory distributed with this software.
 
 Index documents into a collection (see [gather.py](https://github.com/corydodt/Hypy/blob/master/examples/gather.py) for the complete program):
 
-```
+``` python
 ...
 db = HDatabase()
 db.open('casket', 'w')
@@ -60,7 +60,7 @@ doc = HDocument(uri=u'http://estraier.gov/example.txt')
 Search for documents in an existing collection (see [search.py](https://github.com/corydodt/Hypy/blob/master/examples/search.py) for the
 complete program):
 
-```
+``` python
 ...
 # create a search condition object
 cond = HCondition(u'lull*')
@@ -84,22 +84,20 @@ Here are [even more examples](https://github.com/corydodt/Hypy/blob/master/doc/e
 Hypy requires Unicode objects in all of its APIs.
 
 *WRONG*
-```
-
-  >>> d = HDocument(uri='http://pinatas.com/store.html') # byte string!
-  Traceback (most recent call last):
-    File "<stdin>", line 1, in <module>
-    File "/usr/lib/python2.5/site-pacakges/hypy/lib.py", line 291, in __init__
-      raise TypeError("Must provide uri as unicode text")
-  TypeError: Must provide uri as unicode text
+``` python
+>>> d = HDocument(uri='http://pinatas.com/store.html') # byte string!
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/usr/lib/python2.5/site-pacakges/hypy/lib.py", line 291, in __init__
+    raise TypeError("Must provide uri as unicode text")
+TypeError: Must provide uri as unicode text
 ```
 
 *RIGHT*
-```
-
-  >>> d = HDocument(uri=u'http://pinatas.com/store.html') # unicode :-)
-  >>> d.addText(u'Olé')
-  >>> d[u'@title'] = u'Piñata Store'  # attributes are also unicode
+``` python
+>>> d = HDocument(uri=u'http://pinatas.com/store.html') # unicode :-)
+>>> d.addText(u'Olé')
+>>> d[u'@title'] = u'Piñata Store'  # attributes are also unicode
 ```
 
 Because of this change, and some other minor, Python-enhancing differences
