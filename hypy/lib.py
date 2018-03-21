@@ -1,13 +1,6 @@
 """
 Put a Pythonic face on estraiernative
 """
-import sys
-from HTMLParser import HTMLParser
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
-
 from _estraiernative import (Condition as CCondition,
     Database as CDatabase, Document as CDocument, EstError as CError)
 
@@ -477,7 +470,6 @@ class HHit(HDocument):
         snip = self._cdoc.make_snippet(bterms, 120, 35, 35)
 
         # parse the newline-delimited snippet format
-        bunches = snip.split('\n\n')
         strings = []
         for bunch in snip.split('\n\n'):
             _bitStrings = []

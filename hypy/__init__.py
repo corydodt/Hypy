@@ -11,4 +11,8 @@ from hypy.lib import (PutFailed,
     HHit,
     )
 
-from hypy.copyright import __version__
+from hypy._version import __version__
+
+(__version__,
+PutFailed, OpenFailed, CloseFailed, EditFailed, FlushFailed,
+HCondition, HDatabase, HResults, HDocument, HHit) # for pyflakes
