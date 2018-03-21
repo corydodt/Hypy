@@ -26,7 +26,7 @@ class TestHDocument(unittest.TestCase):
     def test_dictlike(self):
         """
         HDocument mostly conforms to the dictionary protocol.  Make sure that
-        works. 
+        works.
         """
         doc = self.doc
 
@@ -408,12 +408,12 @@ class TestDatabase(unittest.TestCase):
         with self.freshenDatabase() as db:
             cc = HCondition(u'hi-res')
             for hit in db.search(cc):
-                self.assertEqual(str(hit), 
+                self.assertEqual(str(hit),
 '@digest=17de33c57e358f0fc5d57cd26a08b48e\n@id=1\n@uri=1\n\nword this is my document. do you like documents? this one is hi-res.\n')
                 self.assertEqual(hit.teaser([u'document']), u'word this is my <strong>document</strong>. do you li ... ke <strong>document</strong>s? this one is hi-re ... ')
                 self.assertEqual(hit.teaser([u'document'], 'rst'), u'word this is my **document**. do you li ... ke **document**s? this one is hi-re ... ')
                 self.assertRaises(TypeError, hit.teaser, ['document'])
-                self.assertRaises(NotImplementedError, hit.teaser, 
+                self.assertRaises(NotImplementedError, hit.teaser,
                         [u'document'], 'pdf')
 
     def test_autoflush(self):

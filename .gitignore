@@ -99,3 +99,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+_temp_db
+.pytest_cache
