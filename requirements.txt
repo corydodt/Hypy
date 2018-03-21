@@ -1,0 +1,4 @@
+pytest-flakes
+pytest-cov
+tox
+twine

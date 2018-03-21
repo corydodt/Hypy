@@ -1,8 +1,6 @@
-## $Id: README.txt,v 1.7 2007/04/17 12:40:02 yosida Exp $
+# Native Python Binding of Hyper Estraier
 
-Native Python Binding of Hyper Estraier
-
-* Overview
+## Overview
 This is an implementation of Python binding for ``Core API'' of Hyper
 Estraier. This is developed on these environment :
  - hyperestraier-1.4.8
@@ -10,11 +8,13 @@ Estraier. This is developed on these environment :
  - Linux 2.4.31, Linux 2.6.9
  - Python 2.4.2
 
-* Install
- % python setup.py build
- % sudo python setup.py install
+## Install
+```
+% python setup.py build
+% sudo python setup.py install
+```
 
-* Usage 
+## Usage 
 See examples/*.py and ``core API'' interface in estraier.idl
 See also rubynative/estraier-doc.rb . 
 ... and read source code (sorry).
@@ -22,7 +22,7 @@ See also rubynative/estraier-doc.rb .
 I refer to the interface of Document, Database, Condition, and
 Result in estraier-doc.rb
 
-* License
+## License
 
 Native Python Binding of Hyper Estraier
 Copyright (c) 2007 SOUNDBOARD Co.,Ltd. 
