@@ -102,3 +102,6 @@ ENV/
 
 _temp_db
 .pytest_cache
+
+Library/
+.vscode/
