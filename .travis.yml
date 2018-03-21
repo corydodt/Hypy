@@ -1,9 +1,10 @@
 language: python
+sudo: required
 python:
   - "2.7"
 # command to install dependencies
 install:
-- "apt-get install -y libestraier-dev"
+- "sudo apt-get install -y libestraier-dev"
 - "pip install tox-travis"
 # command to run tests
 script: tox
