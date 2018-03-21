@@ -28,6 +28,19 @@ installation page for details.
 pip install hypy
 ```
 
+### Running tests
+
+```
+tox
+```
+
+### Build/Upload
+
+```
+$ python setup.py sdist bdist_wheel
+$ twine upload dist/*
+```
+
 ### Quick Start
 
 You can get an instant "oh I get it!" fix by looking inside the "examples"
@@ -117,7 +130,7 @@ estraiernative (c) Yusuke Yoshida.
 
 ## Change Log
 
-### [0.8.6] - xxx
+### [0.8.7] - 2018-03-21
 
 #### Changed:
 
@@ -178,4 +191,4 @@ estraiernative (c) Yusuke Yoshida.
 [0.8.4]: https://github.com/corydodt/Hypy/compare/0.8.3...0.8.4
 [0.8.5]: https://github.com/corydodt/Hypy/compare/0.8.4...0.8.5
 [0.8.5.1]: https://github.com/corydodt/Hypy/compare/0.8.5...0.8.5.1
-[0.8.6]: https://github.com/corydodt/Hypy/compare/0.8.5.1...0.8.6
+[0.8.7]: https://github.com/corydodt/Hypy/compare/0.8.5.1...0.8.7
