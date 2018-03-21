@@ -191,4 +191,4 @@ estraiernative (c) Yusuke Yoshida.
 [0.8.4]: https://github.com/corydodt/Hypy/compare/0.8.3...0.8.4
 [0.8.5]: https://github.com/corydodt/Hypy/compare/0.8.4...0.8.5
 [0.8.5.1]: https://github.com/corydodt/Hypy/compare/0.8.5...0.8.5.1
-[0.8.7]: https://github.com/corydodt/Hypy/compare/0.8.5.1...0.8.7
+[0.8.7]: https://github.com/corydodt/Hypy/compare/0.8.5.1...release-0.8.7
