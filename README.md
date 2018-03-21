@@ -1,4 +1,4 @@
-# Hypy
+# Hypy  [![Build Status](https://travis-ci.org/corydodt/Hypy.svg?branch=master)](https://travis-ci.org/corydodt/Hypy)
 
 Hypy is a fulltext search interface for Python applications.  Use it to index
 and search your documents from Python code.
@@ -113,3 +113,69 @@ LGPL 2.1
 Hypy (c) Cory Dodt, 2018.
 
 estraiernative (c) Yusuke Yoshida.
+
+
+## Change Log
+
+### [0.8.6] - xxx
+
+#### Changed:
+
+- Modernize packaging and add travis builds
+
+### [0.8.5.1] - 2014-07-27
+#### Fixed:
+
+- version issue with pypi
+
+### [0.8.5] - 2014-07-22
+
+### Changed:
+
+- Hypy indexes are now iterable
+
+### [0.8.4] - 2009.09.19
+
+#### Changed:
+
+- It is now possible to construct an attribute-only search with None for
+  search phrase.
+
+### [0.8.3] - 2009.02.22
+
+### Changed:
+
+- Massively improved docstrings and internal documentation.  An extensive
+  examples document is now available
+
+### Fixed:
+
+- Filter out null bytes while indexing.
+
+- Improve performance of attribute searches.
+
+- Add a teaser rst format i.e. **foo**
+
+
+### [0.8.2] - 2009-01-20
+
+#### Fixed:
+
+- I was unconditionally importing ez_setup in my setup.py and that makes it
+  hard to easy_install.  Don't do that.
+
+- No library functionality change, but now more users can install it.
+
+
+### [0.8.1] - 2008-12-15
+
+#### Added:
+  - Initial Public Opensourcing.
+
+[0.8.1]: https://github.com/corydodt/Hypy/tree/0.8.1
+[0.8.2]: https://github.com/corydodt/Hypy/compare/0.8.1...0.8.2
+[0.8.3]: https://github.com/corydodt/Hypy/compare/0.8.2...0.8.3
+[0.8.4]: https://github.com/corydodt/Hypy/compare/0.8.3...0.8.4
+[0.8.5]: https://github.com/corydodt/Hypy/compare/0.8.4...0.8.5
+[0.8.5.1]: https://github.com/corydodt/Hypy/compare/0.8.5...0.8.5.1
+[0.8.6]: https://github.com/corydodt/Hypy/compare/0.8.5.1...0.8.6
