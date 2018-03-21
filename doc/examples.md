@@ -3,35 +3,50 @@
 
 ### Important Classes and Methods
 
-- HDatabase
-    Represents the overall data store containing the index.  **Key
+- _HDatabase_
+
+    Represents the overall data store containing the index.
+    
+    **Key
     Methods**: `db.open(filename, mode)`, `db.close()`,
     `db.putDoc(document)`, `db.search(condition)`
 
-- HDocument
+- _HDocument_
+
     Represents a single document/location which will be indexed and
-    stored. **Key Methods**: `doc.addText(text)`,
+    stored.
+    
+    **Key Methods**: `doc.addText(text)`,
     `doc.addHiddenText(text)`, `doc.encode(encoding)`
 
     In addition, HDocument acts like a dictionary, where the keys are the
     attributes (metadata) of the document.  For example, `doc[u'@uri']`
     returns a document's @uri attribute.  Dictionary methods work too.
 
-- HHit
+- _HHit_
+
     A subclass of HDocument which represents one hit returned from a
-    search.  It has the capabilities of HDocument, plus one more.  **Key
+    search.  It has the capabilities of HDocument, plus one more.
+    
+    **Key
     Methods**: `result.teaser(wordList)`
 
-- HResults
-    A collection of HHit returned from a search.  **Key Methods**:
+- _HResults_
+
+    A collection of HHit returned from a search.
+    
+    **Key Methods**:
     `results.hitWords()`, `results.pluck(attr)`
 
     In addition, HResults acts like a list, so you can iterate results.
 
-- HCondition
+- _HCondition_
+
     A query object which is used to perform a search.  Construct one of
     these with the parameters of the search, such as the phrase to search
-    for and maximum number of hits, or metadata attributes.  **Key
+    for and maximum number of hits, or metadata attributes.
+    
+    **Key
     Methods**: `cond.addAttr(attributeExpression)`,
     `cond.setOrder(orderExpression)`
 
@@ -61,7 +76,7 @@ semantics:
 
 Example:
 
-```
+``` python
 from hypy import *   # don't do this in real life....
                      # import * is bad medicine.
 
@@ -77,18 +92,18 @@ db.open(INDEX, 'a')
 
 Hypy is not *itself* a web spider, but since it depends on Hyper Estraier, you
 **already have one**.  Lucky you!  Here's how you use Hyper Estraier's spider,
-which is called `estwaver`.  More [details on estwaver]() can be found on the
+which is called `estwaver`.  More [details on estwaver](http://hyperestraier.sourceforge.net/cguide-en.html#introduction) can be found on the
 Internet.
 
 (Bash syntax) example:
 
-```
+``` bash
 $ cd ~/projects/
 $ estwaver init hypysite
 2009-02-21T23:18:45Z    INFO    the root directory created
 ```
 
-estwaver `init` does the same thing as `db.open(INDEX, 'w')` in the
+`estwaver init` does the same thing as `db.open(INDEX, 'w')` in the
 example above, except that it also creates a boilerplate config file.
 
 There will now be a file called `hypy/_conf`.  Edit this file.  Change the seeds
@@ -126,7 +141,7 @@ denyrx: ^http://wiki\.goonmill\.org/SystemPages
 Now crawl the site using `estwaver crawl`, telling it the index
 directory to index into
 
-```
+``` bash
 $ estwaver crawl hypysite
 2009-02-21T23:44:43Z    INFO    DB-EVENT: status: name=hypysite/_index ...
 2009-02-21T23:44:43Z    INFO    crawling started (continue)
@@ -141,8 +156,6 @@ $ estwaver crawl hypysite
 2009-02-21T23:47:02Z    INFO    finished successfully
 ```
 
-.. _details on estwaver: http://hyperestraier.sourceforge.net/cguide-en.html#introduction
-
 
 #### CRUD (Create/Read/Update/Delete) Documents
 
@@ -151,7 +164,7 @@ provide some examples for directly operating on documents.
 
 Simple:
 
-```
+``` python
 doc = HDocument(uri=u'http://estraier.gov/example.txt')
 doc.addText(u"Hello there, this is my text.")
 db.putDoc(doc)
@@ -171,7 +184,7 @@ This happens each time:
 
 You can turn on autoflush when you open the index, or do it right now.
 
-```
+``` python
 # db = HDatabase(autoflush=True)  ## or ...
 db.autoflush = True
 # turning on autoflush does not immediately flush, so do that.
@@ -180,16 +193,17 @@ db.flush()
 
 ### Tip
 
-    Autoflush increases disk IO significantly, so it is recommended that you not
+<table><tr><td>    Autoflush increases disk IO significantly, so it is recommended that you not
     autoflush if you are indexing in bulk; instead, flush() every n documents, where
     n is large enough to reduce disk IO but small enough that you won't fill up
     memory.
+</td></tr></table>
 
 All documents must have a @uri attribute, so that gets specified in the
 initializer of HDocument().  However, any other named attribute may also be
 added to a document.
 
-```
+``` python
 doc2 = HDocument(uri=u'http://estraier.gov/pricelist.txt')
 doc2.addText(u"""Coffee: $2.00
 Toast: $1.00
@@ -209,7 +223,7 @@ db.putDoc(doc2)
 
 Some attributes are automatically available
 
-```
+``` python
 print doc[u'@id']
 ## prints 1
 print doc[u'@uri']
@@ -219,7 +233,7 @@ print doc[u'@uri']
 You can directly remove a document from the index, by reference or by either of
 the builtin attributes.
 
-```
+``` python
 db.remove(id=1)
 db.putDoc(doc) # put it back so we can remove it again :)
 db.remove(doc)
@@ -235,7 +249,7 @@ Since you can remove and re-put documents, you now know how to update them.
 So, uh, how many documents are in the index any more?  ``len()`` is how you
 find out, and we can verify that we now have 1 document left:
 
-```
+``` python
 print len(db)
 ## prints 1
 ```
@@ -243,7 +257,7 @@ print len(db)
 You've probably guessed by now that you can also fetch a document from the
 index by uri, using dict-like getitem syntax
 
-```
+``` python
 print db[u'http://extraier.gov/pricelist.txt']
 ## prints @digest=caacaefddcc1fd244de251723b0814be
 ##        @id=2
@@ -256,7 +270,7 @@ representation of the document.  It's also what you get when you use `str()`
 on a document, but this is not the recommended way to get the text.  To get
 the document text encoded in a representation of your choice, use `encode()`
 
-```
+``` python
 print doc2.encode('utf-16')
 ## prints ÿþC^@o^@f^@f^@e^@e^@:...
 ```
@@ -274,7 +288,7 @@ A document's weight is calculated primarily by the number of times a word in
 the phrase matched a document in the index.  If you want to weight certain
 words more heavily, simply insert them--hidden--into the document text.
 
-```
+``` python
 doc5 = HDocument(u'http://estraier.gov/weighted.txt')
 doc5.addText(u"This is my boom-stick.")
 doc5.addHiddenText(u"eggs " * 30)
@@ -285,7 +299,7 @@ The third document will now score *higher* than doc2 when searching for "eggs"
 because of the hidden text.  But if you print it, you will not see the hidden
 text.
 
-```
+``` python
 print doc5.encode('utf-8')
 # prints This is my boom-stick.
 ```
@@ -297,7 +311,7 @@ Say, now that we now how to weight documents for search, how do you search,
 anyway?  Simple: construct a condition, and use ``db.search(condition)``.
 Results are list-like.
 
-```
+``` python
 cond = HCondition(u'eggs')
 results = db.search(cond)
 for doc in results:
@@ -313,7 +327,7 @@ print results.pluck(u'@id')
 
 Search using wildcards is also supported:
 
-```
+``` python
 cond = HCondition(u'egg*')
 results = db.search(cond)
 print len(results)
@@ -328,7 +342,7 @@ done on the search phrase.  But unions are also possible, either by specifying
 phrase.  Search syntax is preferred because it gives you better control over
 the results:
 
-```
+``` python
 doc6 = HDocument(uri=u'http://estraier.gov/spam.txt')
 doc6.addText(u'spam and eggs')
 db.putDoc(doc6)  # document @id is 6
@@ -355,7 +369,7 @@ a method called, hey, `teaser()`.  This method currently has two supported
 formats, html and [rst](http://docutils.sourceforge.net/docs/user/rst/quickref.html).  You must provide it with the words to highlight, as a
 list.
 
-```
+``` python
 words = [u'toast']
 results = db.search(HCondition(u' '.join(words)))
 hit = results[0]
@@ -376,7 +390,7 @@ print hit.teaser(words, format='rst')
 
 There is also a robust syntax for searching for attributes.
 
-```
+``` python
 cond = HCondition()
 cond.addAttr(u'@id STREQ 5')
 
@@ -386,7 +400,7 @@ print db.search(cond)[0][u'@id']
 
 Let's set up a little for the rest of the examples:
 
-```
+``` python
 # for clarity in the rest of these examples, I'll use this function:
 def attrSx(expr):
     cond = HCondition()
@@ -409,7 +423,7 @@ db.putDoc(doc5)
 
 Numeric searches:
 
-```
+``` python
 print attrSx(u'maxprice NUMGE 50')
 # prints 6
 
@@ -427,7 +441,7 @@ print attrSx(u'minprice NUMLE 0.99')
 
 Date comparisons are numeric comparisons:
 
-```
+``` python
 print attrSx(u'date NUMGE 2008-12-31')
 # prints 6 5
 
@@ -437,7 +451,7 @@ print attrSx(u'date NUMGE 2009-01-30')
 
 Regular expressions, why not:
 
-```
+``` python
 print attrSx(u'@uri STRRX (pricelist.txt|spam.txt)')
 # prints 2 6
 ```
@@ -445,16 +459,16 @@ print attrSx(u'@uri STRRX (pricelist.txt|spam.txt)')
 You can invert any attribute expression, too, to get only documents *not*
 matching:
 
-```
+``` python
 print attrSx(u'@uri !STRRX (pricelist.txt|spam.txt)')
 # prints 5
 ```
 
 And of course, you can use attribute searches in the same condition with
 phrase searches.  They combine as using the matching rule of the condition
-(i.e. usually intersection, i.e. "match spam AND minprice<=50")
+(i.e. usually intersection, i.e. `match spam AND minprice<=50`)
 
-```
+``` python
 cond = HCondition(u'spam')
 cond.addAttr(u'minprice NUMLE 50')
 print db.search(cond)[0][u'@id']
@@ -467,7 +481,7 @@ print db.search(cond)[0][u'@id']
 Phew!  Lots of attribute search options and stuff.  Well, that's not all.  You
 can also limit the number of hits and change the order of hits.
 
-```
+``` python
 print db.search(HCondition(u'e*')).pluck(u'@id')
 # prints [u'5', u'2', u'6']
 print db.search(HCondition(u'e*', max=2)).pluck(u'@id')
@@ -476,7 +490,7 @@ print db.search(HCondition(u'e*', max=2)).pluck(u'@id')
 
 If you use `max` you probably also want `skip`.
 
-```
+``` python
 print db.search(HCondition(u'e*', skip=2)).pluck(u'@id')
 # prints [u'6']
 ```
@@ -484,9 +498,9 @@ print db.search(HCondition(u'e*', skip=2)).pluck(u'@id')
 
 To change the order, call `setOrder(order)` on the condition.  The [Hyper
 Estraier User's Guide]() has a complete reference on order expressions.  This
-one changes the result order by the @id attribute.
+one changes the result order by the `@id` attribute.
 
-```
+``` python
 cond = HCondition(u'e*')
 
 # natural (scored) order
