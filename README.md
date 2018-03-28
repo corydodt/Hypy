@@ -141,7 +141,7 @@ estraiernative (c) Yusuke Yoshida.
 
 ### [0.8.5] - 2014-07-22
 
-### Changed:
+#### Changed:
 
 - Hypy indexes are now iterable
 
@@ -154,12 +154,12 @@ estraiernative (c) Yusuke Yoshida.
 
 ### [0.8.3] - 2009.02.22
 
-### Changed:
+#### Changed:
 
 - Massively improved docstrings and internal documentation.  An extensive
   examples document is now available
 
-### Fixed:
+#### Fixed:
 
 - Filter out null bytes while indexing.
 
