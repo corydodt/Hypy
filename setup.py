@@ -4,7 +4,7 @@ from inspect import cleandoc
 from setuptools import setup, Extension
 
 
-__version__ = '0.8.7'
+__version__ = '0.8.8'
 
 
 ext = Extension("_estraiernative",
