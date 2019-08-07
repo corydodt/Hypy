@@ -34,12 +34,18 @@ pip install hypy
 tox
 ```
 
-### Build/Upload
+## Build/upload
 
-``` bash
+- Update setup.py with a new version
+- Update the Change Log below
+- **Commit your changes to the above files.**
+- Add and push a tag for the new release
+
+```
 $ python setup.py sdist bdist_wheel
 $ twine upload dist/*
 ```
+
 
 ### Quick Start
 
@@ -127,6 +133,10 @@ estraiernative (c) Yusuke Yoshida.
 
 
 ## Change Log
+
+#### Fixed:
+
+- (#1) move pytest into dev requirements and drop the required version
 
 ### [0.8.7] - 2018-03-21
 

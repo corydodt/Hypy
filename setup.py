@@ -4,8 +4,7 @@ from inspect import cleandoc
 from setuptools import setup, Extension
 
 
-_version = {}
-execfile('hypy/_version.py', _version)
+__version__ = '0.8.7'
 
 
 ext = Extension("_estraiernative",
@@ -23,7 +22,7 @@ setup(
     maintainer_email='pypi@spam.goonmill.org',
     url='http://goonmill.org/hypy/',
     download_url='http://hypy-source.goonmill.org/archive/tip.tar.gz',
-    version=_version['__version__'],
+    version=__version__,
     ext_modules=[ext],
     zip_safe=False,
     packages=['hypy'],
@@ -39,9 +38,12 @@ setup(
       'Topic :: Software Development :: Libraries',
       'Topic :: Internet :: WWW/HTTP :: Indexing/Search',
       ],
-    install_requires=cleandoc('''
-        pytest>=3.1.0
-        pytest-cov>=2.5.1
-        pytest-flakes>=2.0.0
-    ''')
+    extras_require={
+        'dev': [
+            'pytest>=3.0.2',
+            'pytest-cov>=2.5.1',
+            'pytest-flakes>=2.0.0',
+            'tox',
+        ],
+    },
 )

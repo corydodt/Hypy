@@ -257,9 +257,11 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(len(db), 13)
             # skip and max
             cond4_8 = HCondition(u'filler', max=5)
+            cond4_8.setOrder(u'@id NUMA')
             cond9_11 = HCondition(u'filler', max=3, skip=5)
+            cond9_11.setOrder(u'@id NUMA')
             res1 = db.search(cond4_8)
-            self.assertEqual(res1.pluck(u'@uri'), list(u'45678'))
+            self.assertEqual(res1.pluck(u'@uri'), [u'4', u'5', u'6', u'7', u'8'])
             res2 = db.search(cond9_11)
             self.assertEqual(res2.pluck(u'@uri'), [u'9', u'10', u'11'])
 
