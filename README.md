@@ -134,6 +134,8 @@ estraiernative (c) Yusuke Yoshida.
 
 ## Change Log
 
+### [0.8.8] - 2019-08-07
+
 #### Fixed:
 
 - (#1) move pytest into dev requirements and drop the required version
@@ -200,3 +202,4 @@ estraiernative (c) Yusuke Yoshida.
 [0.8.5]: https://github.com/corydodt/Hypy/compare/0.8.4...0.8.5
 [0.8.5.1]: https://github.com/corydodt/Hypy/compare/0.8.5...0.8.5.1
 [0.8.7]: https://github.com/corydodt/Hypy/compare/0.8.5.1...release-0.8.7
+[0.8.8]: https://github.com/corydodt/Hypy/compare/release-0.8.7...release-0.8.8
