@@ -1,7 +1,7 @@
 /*
   hyperestraier.c - HyperEstraier wrapper for Python
   Copyright (c) 2007, SOUNDBOARD Co.,Ltd.
-  All rights reserved. 
+  All rights reserved.
   Written by Yusuke YOSHIDA <usk.yos_at_gmail.com>
   $Id: estraiernative.c,v 1.11 2007/04/15 05:52:47 yosida Exp $
 */
@@ -16,7 +16,7 @@
 #include <assert.h>
 
 
-#ifdef DEBUG 
+#ifdef DEBUG
 static void debug(char *msg) {
   char dmsg[BUFSIZ];
   sprintf(dmsg, "DEBUG : %s\n", msg);
@@ -101,17 +101,17 @@ dic2CBMAP(PyObject *dic)
 	int items_len, i;
 	PyObject *key_o, *score_o;
 	char *key, *score;
-	
+
 	if (!PyDict_Check(dic)) {
 		PyErr_SetString(PyExc_TypeError, "dict is expected");
 		return NULL;
 	}
-	
+
 	map = cbmapopen();
 	null_check(map, "dic2CBMAP() - cbmapopen()");
 	items = (PyListObject*)PyDict_Items(dic);
 	items_len = PyList_GET_SIZE(items);
-	
+
 	for(i = 0; i < items_len; i++) {
 		key_o = PyTuple_GET_ITEM(PyList_GET_ITEM(items, i), 0);
 		score_o = PyTuple_GET_ITEM(PyList_GET_ITEM(items, i), 1);
@@ -126,7 +126,7 @@ dic2CBMAP(PyObject *dic)
 		//score = strdup(PyString_AS_STRING(score_o));
 		null_check(key, "dic2CBMAP() - strdup()");
 		null_check(score, "dic2CBMAP() - strdup()");
-		
+
 		cbmapput(map, key, -1, score, -1, 1);
 		refcount(key_o, "key_o");
 	}
@@ -169,12 +169,12 @@ list2CBLIST(PyObject *list)
 	CBLIST *cblist;
 	int size, idx;
 	PyObject *item;
-	
+
 	if (!PyList_Check(list)) {
 		PyErr_SetString(PyExc_TypeError, "list2CBLIST() - list is expected");
 		return NULL;
 	}
-		
+
 	cblist = cblistopen();
 	null_check(cblist, "cblistopen()");
 
@@ -214,7 +214,7 @@ static PyObject*
 PyESTDOC_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
     PyESTDOC *pdoc = NULL;
-    
+
     pdoc = (PyESTDOC*)type->tp_alloc(type, 0);
     if (pdoc == NULL) {
         return NULL;
@@ -244,7 +244,7 @@ PyESTDOC_init(PyObject* self, PyObject *args, PyObject *kwds)
         doc = est_doc_new_from_draft(draft);
         debug("PyESTDOC_init() : est_doc_new_from_draft()");
     }
-        
+
     if (doc == NULL) {
         return -1;
     }
@@ -263,7 +263,7 @@ PyESTDOC_dealloc(PyESTDOC *self)
     }
 	PyObject_Del(self);
 }
-       
+
 /* ==== Document methods ==== */
 static PyObject*
 _est_doc_add_attr(PyObject *self, PyObject *args)
@@ -292,7 +292,7 @@ _est_doc_add_text(PyObject *self, PyObject *args)
 
 	est_doc_add_text(pdoc->doc, text);
 	Py_INCREF(Py_None);
-	return Py_None;	   
+	return Py_None;
 }
 
 
@@ -308,7 +308,7 @@ _est_doc_add_hidden_text(PyObject *self, PyObject *args)
 
 	est_doc_add_hidden_text(pdoc->doc, text);
 	Py_INCREF(Py_None);
-	return Py_None;	   
+	return Py_None;
 }
 
 static PyObject*
@@ -317,7 +317,7 @@ _est_doc_set_keywords(PyObject *self, PyObject *args)
 	PyESTDOC *pdoc = (PyESTDOC*)self;
 	PyObject *keyword;
 	CBMAP *map;
-	
+
 	if (!PyArg_ParseTuple(args, "O!", &PyDict_Type, &keyword))
 		return NULL;
 	null_check(pdoc->doc, "this is deleted document");
@@ -331,29 +331,29 @@ _est_doc_set_keywords(PyObject *self, PyObject *args)
 	debug("k 2");
 	Py_INCREF(Py_None);
 	debug("k 3");
-	return Py_None;	   
+	return Py_None;
 }
 
 static PyObject*
 _est_doc_set_score(PyObject *self, PyObject *args)
 {
-#if (_EST_LIBVER > 814)	   
+#if (_EST_LIBVER > 814)
 	PyESTDOC *pdoc = (PyESTDOC*)self;
 	ESTDOC *doc;
 	int score;
-	
+
 	if (!PyArg_ParseTuple(args, "i", &score))
 		return NULL;
 	null_check(pdoc->doc, "this is deleted document");
 
 	est_doc_set_score(pdoc->doc, score);
-	
+
 	Py_INCREF(Py_None);
 	return Py_None;
-#else	 
+#else
 	PyErr_SetString(PyExc_NotImplementedError, "_est_doc_set_score");
 	return NULL;
-#endif	  
+#endif
 }
 
 
@@ -365,7 +365,7 @@ _est_doc_id(PyObject *self, PyObject *args)
 
 	null_check(pdoc->doc, "this is deleted document");
     debug("doc_id - 2");
-    
+
 	id = est_doc_id(pdoc->doc);
     debug("doc_id - 3");
 	return PyInt_FromLong(id);
@@ -377,7 +377,7 @@ _est_doc_attr_names(PyObject *self, PyObject *args)
 	PyESTDOC *pdoc = (PyESTDOC*)self;
 	CBLIST *cbl;
 	PyObject *list;
-	
+
 	null_check(pdoc->doc, "this is deleted document");
 
 	cbl = est_doc_attr_names(pdoc->doc);
@@ -392,7 +392,7 @@ _est_doc_score(PyObject *self, PyObject *args)
 	PyESTDOC *pdoc = (PyESTDOC*)self;
 	long score;
 	PyObject *rv;
-	
+
 	null_check(pdoc->doc, "this is deleted document");
 
 	score = est_doc_score(pdoc->doc);
@@ -411,7 +411,7 @@ _est_doc_attr(PyObject *self, PyObject *args)
 	PyESTDOC *pdoc = (PyESTDOC*)self;
 	const char *name, *attr;
 	PyObject *rv;
-	
+
 	if (!PyArg_ParseTuple(args, "s", &name))
 		return NULL;
 	null_check(pdoc->doc, "this is deleted document");
@@ -432,11 +432,11 @@ _est_doc_texts(PyObject *self, PyObject *args)
 	PyESTDOC *pdoc = (PyESTDOC*)self;
 	CBLIST *cbl;
 	PyObject *rv;
-	
+
 	null_check(pdoc->doc, "this is deleted document");
-    
+
     // donot cblistclose(), because a life span of cbl syncs pdoc->doc.
-	cbl = (CBLIST*)est_doc_texts(pdoc->doc);  
+	cbl = (CBLIST*)est_doc_texts(pdoc->doc);
 	rv = CBLIST2list(cbl);
 
 	return rv;
@@ -448,7 +448,7 @@ _est_doc_cat_texts(PyObject *self, PyObject *args)
 	PyESTDOC *pdoc = (PyESTDOC*)self;
     PyObject *rv;
 	char *ret = NULL;
-	
+
 	null_check(pdoc->doc, "this is deleted document");
     debug("null_check 0");
 	ret = est_doc_cat_texts(pdoc->doc);
@@ -467,7 +467,7 @@ _est_doc_keywords(PyObject *self, PyObject *args)
 	PyESTDOC *pdoc = (PyESTDOC*)self;
 	CBMAP *map;
 	PyObject *rv;
-	
+
 	null_check(pdoc->doc, "this is deleted document");
 	debug("est_doc_keywods 0");
 	map = est_doc_keywords(pdoc->doc);
@@ -485,7 +485,7 @@ _est_doc_dump_draft(PyObject *self, PyObject *args)
 	PyESTDOC *pdoc = (PyESTDOC*)self;
 	char *draft;
 	PyObject *rv;
-	
+
 	null_check(pdoc->doc, "this is deleted document");
 
 	draft = est_doc_dump_draft(pdoc->doc);
@@ -502,7 +502,7 @@ _est_doc_make_snippet(PyObject *self, PyObject *args)
 	int ww, hw, aw;
 	CBLIST *cbl;
 	char *snippet;
-	
+
 	if (!PyArg_ParseTuple(args, "O!iii", &PyList_Type, &words, &ww, &hw, &aw))
 		return NULL;
 	null_check(pdoc->doc, "this is deleted document");
@@ -624,7 +624,7 @@ _est_err_msg(PyObject *self, PyObject *args)
 	int ecode;
 	char errmsg[BUFSIZ];
 	PyObject *rv;
-	
+
 	if (!PyArg_ParseTuple(args, "i:err_msg", &ecode))
 		return NULL;
 
@@ -652,7 +652,7 @@ _est_db_open(PyObject *self, PyObject *args)
         Py_INCREF(Py_False);
         return Py_False;
     }
-	
+
 	if (!PyArg_ParseTuple(args, "si", &name, &omode))
 		return NULL;
 
@@ -729,7 +729,7 @@ _est_db_add_attr_index(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "si", &name, &type))
         return NULL;
     null_check(pdb->db, "db is closed");
-    
+
     ret = est_mtdb_add_attr_index(pdb->db, name, type);
     if (ret) {
         rv = Py_True;
@@ -755,7 +755,7 @@ _est_db_flush(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "i", &max))
         return NULL;
     null_check(pdb->db, "db is closed");
-    
+
     ret = est_mtdb_flush(pdb->db, max);
     if (ret) {
         rv = Py_True;
@@ -775,7 +775,7 @@ _est_db_sync(PyObject *self, PyObject *args)
     PyObject *rv;
 
     null_check(pdb->db, "db is closed");
-    
+
     ret = est_mtdb_sync(pdb->db);
     if (ret) {
         rv = Py_True;
@@ -797,7 +797,7 @@ _est_db_optimize(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "i", &opts))
         return NULL;
     null_check(pdb->db, "db is closed");
-    
+
     ret = est_mtdb_optimize(pdb->db, opts);
     if (ret) {
         rv = Py_True;
@@ -812,7 +812,7 @@ _est_db_optimize(PyObject *self, PyObject *args)
 static PyObject*
 _est_db_merge(PyObject *self, PyObject *args)
 {
-#if (_EST_LIBVER > 814)    
+#if (_EST_LIBVER > 814)
     PyESTDB *pdb = (PyESTDB*)self;
     char *name;
     int opts, ret;
@@ -821,7 +821,7 @@ _est_db_merge(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "si", &name, &opts))
         return NULL;
     null_check(pdb->db, "db is closed");
-    
+
     ret = est_mtdb_merge(pdb->db, name, opts);
     if (ret) {
         rv = Py_True;
@@ -849,7 +849,7 @@ _est_db_put_doc(PyObject *self, PyObject *args)
         return NULL;
     null_check(pdb->db, "db is closed");
     null_check(pdoc->doc, "this is deleted document");
-    
+
     ret = est_mtdb_put_doc(pdb->db, pdoc->doc, opts);
     if (ret) {
         rv = Py_True;
@@ -858,7 +858,7 @@ _est_db_put_doc(PyObject *self, PyObject *args)
         pdb->ecode = est_mtdb_error(pdb->db);
     }
     Py_INCREF(rv);
-    return rv;    
+    return rv;
 }
 
 static PyObject*
@@ -871,7 +871,7 @@ _est_db_out_doc(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "ii", &id, &opts))
         return NULL;
     null_check(pdb->db, "db is closed");
-    
+
     ret = est_mtdb_out_doc(pdb->db, id, opts);
     if (ret) {
         rv = Py_True;
@@ -880,7 +880,7 @@ _est_db_out_doc(PyObject *self, PyObject *args)
         pdb->ecode = est_mtdb_error(pdb->db);
     }
     Py_INCREF(rv);
-    return rv;    
+    return rv;
 }
 
 static PyObject*
@@ -895,7 +895,7 @@ _est_db_edit_doc(PyObject *self, PyObject *args)
         return NULL;
     null_check(pdb->db, "db is closed");
     null_check(pdoc->doc, "this is deleted document");
-    
+
     ret = est_mtdb_edit_doc(pdb->db, pdoc->doc);
     if (ret) {
         rv = Py_True;
@@ -904,7 +904,7 @@ _est_db_edit_doc(PyObject *self, PyObject *args)
         pdb->ecode = est_mtdb_error(pdb->db);
     }
     Py_INCREF(rv);
-    return rv;        
+    return rv;
 }
 
 static PyObject*
@@ -914,7 +914,7 @@ _est_db_get_doc(PyObject *self, PyObject *args)
     int id, opts;
     PyESTDOC *pdoc;
     ESTDOC *doc;
-    
+
     if (!PyArg_ParseTuple(args, "ii", &id, &opts))
         return NULL;
 
@@ -1035,7 +1035,7 @@ _est_db_search(PyObject *self, PyObject *args)
     int nump, *ret, i;
     PyObject *hints, *list;
     CBMAP *map;
-    
+
     if (!PyArg_ParseTuple(args, "O!", &PyESTCOND_Type, &pcond))
         return NULL;
     null_check(pdb->db, "db is closed");
@@ -1052,7 +1052,7 @@ _est_db_search(PyObject *self, PyObject *args)
 
     res->ids = ret;
     res->num = nump;
-    res->hints = map;    
+    res->hints = map;
     debug("_est_db_search() - ids, num, hints");
     refcount(res, "db_search");
     return (PyObject*)res;
@@ -1073,7 +1073,7 @@ _est_db_scan_doc(PyObject *self, PyObject *args)
     PyESTCOND *pcond;
     int ret;
     PyObject *rv;
-    
+
     if (!PyArg_ParseTuple(args, "O!O!",
                           &PyESTDOC_Type, &pdoc,
                           &PyESTCOND_Type, &pcond))
@@ -1089,7 +1089,7 @@ _est_db_scan_doc(PyObject *self, PyObject *args)
         rv = Py_False;
     }
     Py_INCREF(rv);
-    return rv;            
+    return rv;
 }
 
 static PyObject*
@@ -1118,7 +1118,7 @@ _dic2dic(PyObject *self, PyObject *args)
 {
     PyObject *dic, *rv;
     CBMAP *map;
-    debug("d 0");    
+    debug("d 0");
     if (!PyArg_ParseTuple(args, "O!", &PyDict_Type, &dic))
         return NULL;
     debug("d 1");
@@ -1217,7 +1217,7 @@ static PyObject*
 PyESTCOND_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	PyESTCOND *pcond;
-    
+
 	pcond = (PyESTCOND*)type->tp_alloc(type, 0);
     if (pcond != NULL) {
         pcond->cond = NULL;
@@ -1234,11 +1234,11 @@ PyESTCOND_init(PyObject* self, PyObject *args, PyObject *kwds) {
     if (cond == NULL) {
         return -1;
     }
-    
+
     pcond->cond = cond;
     debug("PyESTCOND_init");
     return 0;
-    
+
 }
 
 static void
@@ -1259,7 +1259,7 @@ _est_cond_set_phrase(PyObject *self, PyObject *args)
 {
 	PyESTCOND *pcond = (PyESTCOND*)self;
 	const char *phrase;
-	
+
 	if (!PyArg_ParseTuple(args, "s", &phrase))
 		return NULL;
 
@@ -1278,7 +1278,7 @@ _est_cond_add_attr(PyObject *self, PyObject *args)
 {
 	PyESTCOND *pcond = (PyESTCOND*)self;
 	const char *expr;
-	
+
 	if (!PyArg_ParseTuple(args, "s", &expr))
 		return NULL;
 
@@ -1286,7 +1286,7 @@ _est_cond_add_attr(PyObject *self, PyObject *args)
 
 	est_cond_add_attr(pcond->cond, expr);
 	Py_INCREF(Py_None);
-	return Py_None;	   
+	return Py_None;
 }
 
 static PyObject*
@@ -1294,7 +1294,7 @@ _est_cond_set_order(PyObject *self, PyObject *args)
 {
 	PyESTCOND *pcond = (PyESTCOND*)self;
 	const char *expr;
-	
+
 	if (!PyArg_ParseTuple(args, "s", &expr))
 		return NULL;
 
@@ -1302,7 +1302,7 @@ _est_cond_set_order(PyObject *self, PyObject *args)
 
 	est_cond_set_order(pcond->cond, expr);
 	Py_INCREF(Py_None);
-	return Py_None;	   
+	return Py_None;
 }
 
 static PyObject*
@@ -1310,7 +1310,7 @@ _est_cond_set_max(PyObject *self, PyObject *args)
 {
 	PyESTCOND *pcond = (PyESTCOND*)self;
 	int i;
-	
+
 	if (!PyArg_ParseTuple(args, "i", &i))
 		return NULL;
 
@@ -1318,7 +1318,7 @@ _est_cond_set_max(PyObject *self, PyObject *args)
 
 	est_cond_set_max(pcond->cond, i);
 	Py_INCREF(Py_None);
-	return Py_None;	   
+	return Py_None;
 }
 
 static PyObject*
@@ -1326,7 +1326,7 @@ _est_cond_set_skip(PyObject *self, PyObject *args)
 {
 	PyESTCOND *pcond = (PyESTCOND*)self;
 	int i;
-	
+
 	if (!PyArg_ParseTuple(args, "i", &i))
 		return NULL;
 
@@ -1334,7 +1334,7 @@ _est_cond_set_skip(PyObject *self, PyObject *args)
 
 	est_cond_set_skip(pcond->cond, i);
 	Py_INCREF(Py_None);
-	return Py_None;	   
+	return Py_None;
 }
 
 static PyObject*
@@ -1342,7 +1342,7 @@ _est_cond_set_options(PyObject *self, PyObject *args)
 {
 	PyESTCOND *pcond = (PyESTCOND*)self;
 	int i;
-	
+
 	if (!PyArg_ParseTuple(args, "i", &i))
 		return NULL;
 
@@ -1350,7 +1350,7 @@ _est_cond_set_options(PyObject *self, PyObject *args)
 
 	est_cond_set_options(pcond->cond, i);
 	Py_INCREF(Py_None);
-	return Py_None;	   
+	return Py_None;
 }
 
 static PyObject*
@@ -1358,7 +1358,7 @@ _est_cond_set_auxiliary(PyObject *self, PyObject *args)
 {
 	PyESTCOND *pcond = (PyESTCOND*)self;
 	int i;
-	
+
 	if (!PyArg_ParseTuple(args, "i", &i))
 		return NULL;
 
@@ -1366,7 +1366,7 @@ _est_cond_set_auxiliary(PyObject *self, PyObject *args)
 
 	est_cond_set_auxiliary(pcond->cond, i);
 	Py_INCREF(Py_None);
-	return Py_None;	   
+	return Py_None;
 }
 
 static PyObject*
@@ -1374,7 +1374,7 @@ _est_cond_set_eclipse(PyObject *self, PyObject *args)
 {
 	PyESTCOND *pcond = (PyESTCOND*)self;
 	double d;
-	
+
 	if (!PyArg_ParseTuple(args, "d", &d))
 		return NULL;
 
@@ -1382,16 +1382,16 @@ _est_cond_set_eclipse(PyObject *self, PyObject *args)
 
 	est_cond_set_auxiliary(pcond->cond, d);
 	Py_INCREF(Py_None);
-	return Py_None;	   
+	return Py_None;
 }
 
 static PyObject*
 _est_cond_set_distinct(PyObject *self, PyObject *args)
 {
-#if (_EST_LIBVER > 814)	   
+#if (_EST_LIBVER > 814)
 	PyESTCOND *pcond = (PyESTCOND*)self;
     char *name;
-	
+
 	if (!PyArg_ParseTuple(args, "s", &name))
 		return NULL;
 
@@ -1402,17 +1402,17 @@ _est_cond_set_distinct(PyObject *self, PyObject *args)
 	return Py_None;
 #else
 	PyErr_SetString(PyExc_NotImplementedError, "_est_cond_set_distinct");
-	return NULL;	
-#endif	  
+	return NULL;
+#endif
 }
 
 static PyObject*
 _est_cond_set_mask(PyObject *self, PyObject *args)
 {
-#if (_EST_LIBVER > 814)	   
+#if (_EST_LIBVER > 814)
 	PyESTCOND *pcond = (PyESTCOND*)self;
 	int i;
-	
+
 	if (!PyArg_ParseTuple(args, "i", &i))
 		return NULL;
 
@@ -1423,8 +1423,8 @@ _est_cond_set_mask(PyObject *self, PyObject *args)
 	return Py_None;
 #else
 	PyErr_SetString(PyExc_NotImplementedError, "_est_cond_set_mask");
-	return NULL;	
-#endif	  
+	return NULL;
+#endif
 }
 
 static PyObject*
@@ -1578,7 +1578,7 @@ static PyMethodDef PyESTCOND_methods[] = {
     {"get_auxliary", _est_cond_get_auxiliary, METH_NOARGS, NULL},
     {"get_distinct", _est_cond_get_distinct, METH_NOARGS, NULL},
     {"get_mask", _est_cond_get_mask, METH_NOARGS, NULL},
-    
+
 	{NULL,		NULL}		/* sentinel */
 };
 
@@ -1686,7 +1686,7 @@ _est_res_get_doc_id(PyObject *self, PyObject *args)
 {
     PyESTRES* res = (PyESTRES*)self;
     int idx;
-    
+
     if (!PyArg_ParseTuple(args, "i", &idx))
         return NULL;
 
@@ -1694,7 +1694,7 @@ _est_res_get_doc_id(PyObject *self, PyObject *args)
         PyErr_SetString(PyExc_IndexError, "index out of range");
         return NULL;
     }
-    
+
     return PyInt_FromLong(res->ids[idx]);
 }
 
@@ -1703,7 +1703,7 @@ _est_res_get_dbidx(PyObject *self, PyObject *args)
 {
     PyESTRES* res = (PyESTRES*)self;
     int idx;
-    
+
     if (!PyArg_ParseTuple(args, "i", &idx))
         return NULL;
 
@@ -1711,7 +1711,7 @@ _est_res_get_dbidx(PyObject *self, PyObject *args)
         PyErr_SetString(PyExc_IndexError, "index out of range");
         return NULL;
     }
-    
+
     return PyInt_FromLong(res->dbidxs[idx]);
 }
 static PyObject*
@@ -1722,7 +1722,7 @@ _est_res_hint_words(PyObject *self, PyObject *args)
     CBLIST *words;
     int i;
     const char* vbuf;
-    
+
     if (res->hints == NULL) {
         return PyList_New(0);
     }
@@ -1746,7 +1746,7 @@ _est_res_hint(PyObject *self, PyObject *args)
     PyESTRES* res = (PyESTRES*)self;
     char *word;
     const char* vbuf;
-    
+
     if (!PyArg_ParseTuple(args, "s", word)) {
         return NULL;
     }
@@ -1767,7 +1767,7 @@ _est_res_get_score(PyObject *self, PyObject *args)
     int idx;
 
 	PyErr_SetString(PyExc_NotImplementedError, "_est_cond_set_mask");
-	return NULL;	
+	return NULL;
 }
 static PyObject*
 _est_res_get_shadows(PyObject *self, PyObject *args)
@@ -1775,7 +1775,7 @@ _est_res_get_shadows(PyObject *self, PyObject *args)
     PyESTRES* res = (PyESTRES*)self;
 
 	PyErr_SetString(PyExc_NotImplementedError, "_est_cond_set_mask");
-	return NULL;	
+	return NULL;
 }
 
 static PyMethodDef PyESTRES_methods[] = {
@@ -1864,9 +1864,9 @@ init_estraiernative(void)
 
     if (PyType_Ready(&PyESTRES_Type) < 0)
 		return;
-    
+
 	m = Py_InitModule3("_estraiernative", hyperest_methods, module_doc);
-    
+
     // Document
     Py_INCREF(&PyESTDOC_Type);
     PyModule_AddObject(m, "Document", (PyObject*)&PyESTDOC_Type);
@@ -1939,5 +1939,5 @@ init_estraiernative(void)
 
     debug("init_estraeirnative fin.");
 }
-     
-     
+
+
