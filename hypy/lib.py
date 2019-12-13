@@ -1,8 +1,14 @@
 """
 Put a Pythonic face on estraiernative
 """
+import six
+
 from _estraiernative import (Condition as CCondition,
     Database as CDatabase, Document as CDocument, EstError as CError)
+
+
+DEFAULT_ENCODING = 'utf-8'
+
 
 class FlushFailed(Exception):
     """
@@ -13,6 +19,7 @@ class FlushFailed(Exception):
 
     def __str__(self):
         return self.msg
+
 
 class EditFailed(Exception):
     """
@@ -25,6 +32,7 @@ class EditFailed(Exception):
     def __str__(self):
         return 'Document %s: %s' % (self.id, self.msg)
 
+
 class PutFailed(Exception):
     """
     Could not add the specified doc to the database.
@@ -36,6 +44,7 @@ class PutFailed(Exception):
     def __str__(self):
         return 'Document %s: %s' % (self.uri, self.msg)
 
+
 class OpenFailed(Exception):
     """
     Could not open the database with the specified mode.
@@ -45,6 +54,7 @@ class OpenFailed(Exception):
 
     def __str__(self):
         return self.msg
+
 
 class CloseFailed(Exception):
     """
@@ -57,15 +67,16 @@ class CloseFailed(Exception):
         return self.msg
 
 
-def enforceUnicode(s, argName, exceptionClass, encoding='utf8'):
+def enforceUnicode(s, argName, exceptionClass, encoding=DEFAULT_ENCODING):
     """
     Force s to be a unicode object or None; return a byte string
     """
     if s is None:
         return None
-    if not type(s) is unicode:
+    if not type(s) is six.text_type:
         raise exceptionClass('%s must be unicode' % (argName,))
     return s.encode(encoding)
+
 
 def unicodeToByte(argSpecs, exceptionClass):
     """
@@ -311,7 +322,7 @@ class HResults(list):
         """
         Return the unicode-d search terms
         """
-        return [w.decode('utf-8') for w in self._cresult.hint_words()]
+        return [w.decode(DEFAULT_ENCODING) for w in self._cresult.hint_words()]
 
     def pluck(self, attribute):
         """
@@ -327,12 +338,13 @@ class HDocument(object):
     >>> doc = HDocument(u'http://sample.com/page.html')
     """
     def __str__(self):
-        return self._cdoc.dump_draft()
+        return six.ensure_str(self._cdoc.dump_draft(), DEFAULT_ENCODING)
 
     @unicodeToByte([(1,'uri')], TypeError)
     def __init__(self, uri):
         self._cdoc = CDocument()
-        self._cdoc.add_attr('@uri', uri.replace('\0', ''))
+        uri = uri.replace(b'\0', b'')
+        self._cdoc.add_attr(b'@uri', uri)
 
     @unicodeToByte([(1,'text')], TypeError)
     def addHiddenText(self, text):
@@ -340,14 +352,14 @@ class HDocument(object):
         Add text that will affect search scoring but will NOT appear in the
         output document
         """
-        self._cdoc.add_hidden_text(text.replace('\0', ''))
+        self._cdoc.add_hidden_text(text.replace(b'\0', b''))
 
     @unicodeToByte([(1,'text')], TypeError)
     def addText(self, text):
         """
         Put some text into the document
         """
-        self._cdoc.add_text(text.replace('\0', ''))
+        self._cdoc.add_text(text.replace(b'\0', b''))
 
     @classmethod
     def fromCDocument(cls, cdocument):
@@ -355,7 +367,7 @@ class HDocument(object):
         Construct a document from an existing estraiernative.Document, such as
         when iterating search results.
         """
-        self = cls(uri=cdocument.attr('@uri').decode('utf8'))
+        self = cls(uri=cdocument.attr(b'@uri').decode(DEFAULT_ENCODING))
         self._cdoc = cdocument
         return self
 
@@ -364,14 +376,14 @@ class HDocument(object):
 
     @unicodeToByte([(1,'name'), (2,'value')], TypeError)
     def __setitem__(self, name, value):
-        self._cdoc.add_attr(name.replace('\0', ''),
-                value.replace('\0', ''))
+        self._cdoc.add_attr(name.replace(b'\0', b''),
+                value.replace(b'\0', b''))
 
     @unicodeToByte([(1,'name')], KeyError)
     def __getitem__(self, name):
         if name not in self._cdoc.attr_names():
             raise KeyError(name)
-        return self._cdoc.attr(name).decode('utf-8')
+        return self._cdoc.attr(name).decode(DEFAULT_ENCODING)
 
     def update(self, other):
         """
@@ -394,7 +406,7 @@ class HDocument(object):
         """
         Names of all attributes set on this document
         """
-        return [n.decode('utf-8') for n in self._cdoc.attr_names()]
+        return [n.decode(DEFAULT_ENCODING) for n in self._cdoc.attr_names()]
 
     def values(self):
         """
@@ -413,7 +425,7 @@ class HDocument(object):
         """
         Return all (visible) texts in this document, as a list
         """
-        return map(lambda t: t.decode('utf-8'), self._cdoc.texts())
+        return [t.decode(DEFAULT_ENCODING) for t in self._cdoc.texts()]
 
     def _get_text(self):
         return u'\n'.join(self.getTexts())
@@ -427,7 +439,7 @@ class HDocument(object):
         """
         Return an encoded version of this document.  Convenience method
         """
-        return ''.join([s.encode(encoding) for s in self.getTexts()])
+        return b''.join([s.encode(encoding) for s in self.getTexts()])
 
 
 class HHit(HDocument):
@@ -441,20 +453,20 @@ class HHit(HDocument):
         """
         Write emphasized text in html
         """
-        return '<strong>%s</strong>' % text
+        return b'<strong>%s</strong>' % text
 
     def emphasize_rst(self, text):
         """
         Write emphasized text in restructuredtext
         """
-        return '**%s**' % text
+        return b'**%s**' % text
 
     def teaser(self, terms, format='html'):
         """
         Produce the teaser/snippet text for the hit
         """
         if format not in self.teaserFormats:
-            raise NotImplementedError( "Supported formats are: %s" % (
+            raise NotImplementedError("Supported formats are: %s" % (
                 ', '.join(self.teaserFormats),))
 
         emph = getattr(self, 'emphasize_%s' % (format,))
@@ -462,24 +474,22 @@ class HHit(HDocument):
         # arguments to make_snippet MUST be byte strings
         bterms = []
         for t in terms:
-            if not type(t) is type(u''):
-                raise TypeError("Terms must be unicode text")
-            bterms.append(t.encode('utf8'))
+            bterms.append(six.ensure_binary(t, DEFAULT_ENCODING))
 
         # TODO - parameterize make_snippet's numbers
         snip = self._cdoc.make_snippet(bterms, 120, 35, 35)
 
         # parse the newline-delimited snippet format
         strings = []
-        for bunch in snip.split('\n\n'):
+        for bunch in snip.split(b'\n\n'):
             _bitStrings = []
-            for bit in bunch.split('\n'):
-                if '\t' in bit:
-                    _bitStrings.append(emph(bit.split('\t')[0]))
+            for bit in bunch.split(b'\n'):
+                if b'\t' in bit:
+                    _bitStrings.append(emph(bit.split(b'\t')[0]))
                 else:
                     _bitStrings.append(bit)
-            strings.append(''.join(_bitStrings))
+            strings.append(b''.join(_bitStrings))
 
-        decode = lambda s: unicode(s, 'utf8')
-        snip = u' ... '.join(map(decode, strings))
+        decode = lambda s: six.ensure_text(s, DEFAULT_ENCODING)
+        snip = u' ... '.join([decode(s) for s in strings])
         return snip

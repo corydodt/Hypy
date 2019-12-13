@@ -44,6 +44,8 @@ setup(
             'pytest-cov>=2.5.1',
             'pytest-flakes>=2.0.0',
             'tox',
+            'twine',
         ],
     },
+    install_requires=['six']
 )

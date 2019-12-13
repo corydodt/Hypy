@@ -35,6 +35,30 @@ static void refcount(PyObject *o, char *tag) {
 }
 #endif
 
+
+#if PY_MAJOR_VERSION >= 3
+  #define MOD_ERROR_VAL NULL
+  #define MOD_SUCCESS_VAL(val) val
+  #define MOD_INIT(name) PyMODINIT_FUNC PyInit_##name(void)
+  #define MOD_DEF(ob, name, doc, methods) \
+          static struct PyModuleDef moduledef = { \
+            PyModuleDef_HEAD_INIT, name, doc, -1, methods, }; \
+          ob = PyModule_Create(&moduledef);
+  #define PYINT_FROMLONG PyLong_FromLong
+  #define BYTES_FORMAT "y"
+  #define BYTES_OR_NONE_FORMAT "y"
+#else
+  #define MOD_ERROR_VAL
+  #define MOD_SUCCESS_VAL(val)
+  #define MOD_INIT(name) void init##name(void)
+  #define MOD_DEF(ob, name, doc, methods) \
+          ob = Py_InitModule3(name, methods, doc);
+  #define PYINT_FROMLONG PyInt_FromLong
+  #define BYTES_FORMAT "s"
+  #define BYTES_OR_NONE_FORMAT "z"
+#endif
+
+
 /* --------------------------------------------------------------------- */
 
 /* ==================== type definition ==================== */
@@ -45,7 +69,7 @@ typedef struct {
     ESTDOC *doc;
 } PyESTDOC;
 static PyTypeObject PyESTDOC_Type;
-#define PyESTDOCObject_Check(v)	((v)->ob_type == &PyESTDOC_Type)
+#define PyESTDOCObject_Check(v)	(Py_TYPE(v) == &PyESTDOC_Type)
 
 typedef struct {
     PyObject_HEAD;
@@ -53,14 +77,14 @@ typedef struct {
     ESTMTDB *db;
 } PyESTDB;
 static PyTypeObject PyESTDB_Type;
-#define PyESTDBObject_Check(v)	((v)->ob_type == &PyESTDB_Type)
+#define PyESTDBObject_Check(v)	(Py_TYPE(v) == &PyESTDB_Type)
 
 typedef struct {
     PyObject_HEAD;
     ESTCOND *cond;
 } PyESTCOND;
 static PyTypeObject PyESTCOND_Type;
-#define PyESTCONDObject_Check(v)	((v)->ob_type == &PyESTCOND_Type)
+#define PyESTCONDObject_Check(v)	(Py_TYPE(v) == &PyESTCOND_Type)
 
 typedef struct {
     PyObject_HEAD;
@@ -70,13 +94,13 @@ typedef struct {
     CBMAP *hints;
 } PyESTRES;
 static PyTypeObject PyESTRES_Type;
-#define PyESTRESObject_Check(v)	((v)->ob_type == &PyESTRES_Type)
+#define PyESTRESObject_Check(v)	(Py_TYPE(v) == &PyESTRES_Type)
 
 static PyESTRES* estres_factory(void);
 
 /* ==================== utility functions ==================== */
 #define define_const(dic, key, val) do { \
-    PyDict_SetItemString(dic, key, PyInt_FromLong(val)); \
+    PyDict_SetItemString(dic, key, PYINT_FROMLONG(val)); \
 } while (0)
 
 #define define_const_fmt(dic, key, val, fmt) do { \
@@ -116,14 +140,12 @@ dic2CBMAP(PyObject *dic)
         key_o = PyTuple_GET_ITEM(PyList_GET_ITEM(items, i), 0);
         score_o = PyTuple_GET_ITEM(PyList_GET_ITEM(items, i), 1);
 
-        if (!(PyString_Check(key_o) && PyString_Check(score_o))) {
+        if (!(PyBytes_Check(key_o) && PyBytes_Check(score_o))) {
           PyErr_SetString(PyExc_TypeError, "dic2CBMAP() - str is expected");
           return NULL;
         }
-        key = PyString_AS_STRING(key_o);
-        score = PyString_AS_STRING(score_o);
-        //key = strdup(PyString_AS_STRING(key_o));
-        //score = strdup(PyString_AS_STRING(score_o));
+        key = PyBytes_AS_STRING(key_o);
+        score = PyBytes_AS_STRING(score_o);
         null_check(key, "dic2CBMAP() - strdup()");
         null_check(score, "dic2CBMAP() - strdup()");
 
@@ -157,7 +179,7 @@ CBMAP2dic(CBMAP *map)
     while ((key = cbmapiternext(map, &ksp)) != NULL) {
         v = cbmapget(map, key, -1, &vsp);
         null_check(v, "CBMAP2dic() - cbmapget()");
-        PyDict_SetItemString(dic, key, PyString_FromString(v));
+        PyDict_SetItemString(dic, key, PyBytes_FromString(v));
     }
     return dic;
 }
@@ -181,7 +203,7 @@ list2CBLIST(PyObject *list)
     size = PyList_GET_SIZE(list);
     for (idx = 0; idx < size; idx++) {
         item = PyList_GET_ITEM(list, idx);
-        cblistpush(cblist, PyString_AS_STRING(item), -1);
+        cblistpush(cblist, PyBytes_AsString(item), -1);
     }
     return cblist;
 }
@@ -202,7 +224,7 @@ CBLIST2list(CBLIST *cblist)
 
     for (idx = 0; idx < size; idx++) {
         item = cblistval(cblist, idx, NULL);
-        PyList_SetItem(list, idx, PyString_FromString(item));
+        PyList_SetItem(list, idx, PyBytes_FromString(item));
     }
     return list;
 }
@@ -229,11 +251,10 @@ PyESTDOC_init(PyObject* self, PyObject *args, PyObject *kwds)
     PyESTDOC* pdoc = (PyESTDOC*)self;
     ESTDOC *doc;
     const char* draft = NULL;
-    static char* keywords[] = {"draft", 0};
 
     assert(args != NULL);
     assert(pdoc != NULL);
-    if(!PyArg_ParseTuple(args, "|s", &draft)) {
+    if(!PyArg_ParseTuple(args, "|" BYTES_FORMAT, &draft)) {
         return -1;
     }
 
@@ -271,7 +292,7 @@ _est_doc_add_attr(PyObject *self, PyObject *args)
     PyESTDOC *pdoc = (PyESTDOC*)self;
     const char *name, *value;
 
-    if (!PyArg_ParseTuple(args, "sz", &name, &value))
+    if (!PyArg_ParseTuple(args, BYTES_FORMAT BYTES_OR_NONE_FORMAT, &name, &value))
         return NULL;
     null_check(pdoc->doc, "this is deleted document");
 
@@ -286,7 +307,7 @@ _est_doc_add_text(PyObject *self, PyObject *args)
     PyESTDOC *pdoc = (PyESTDOC*)self;
     const char *text;
 
-    if (!PyArg_ParseTuple(args, "s", &text))
+    if (!PyArg_ParseTuple(args, BYTES_FORMAT, &text))
         return NULL;
     null_check(pdoc->doc, "this is deleted document");
 
@@ -302,7 +323,7 @@ _est_doc_add_hidden_text(PyObject *self, PyObject *args)
     PyESTDOC *pdoc = (PyESTDOC*)self;
     const char *text;
 
-    if (!PyArg_ParseTuple(args, "s", &text))
+    if (!PyArg_ParseTuple(args, BYTES_FORMAT, &text))
         return NULL;
     null_check(pdoc->doc, "this is deleted document");
 
@@ -339,7 +360,6 @@ _est_doc_set_score(PyObject *self, PyObject *args)
 {
 #if (_EST_LIBVER > 814)
     PyESTDOC *pdoc = (PyESTDOC*)self;
-    ESTDOC *doc;
     int score;
 
     if (!PyArg_ParseTuple(args, "i", &score))
@@ -368,7 +388,7 @@ _est_doc_id(PyObject *self, PyObject *args)
 
     id = est_doc_id(pdoc->doc);
     debug("doc_id - 3");
-    return PyInt_FromLong(id);
+    return PYINT_FROMLONG(id);
 }
 
 static PyObject*
@@ -397,7 +417,7 @@ _est_doc_score(PyObject *self, PyObject *args)
 
     score = est_doc_score(pdoc->doc);
     if (score) {
-        rv = PyInt_FromLong(score);
+        rv = PYINT_FROMLONG(score);
     } else {
         rv = Py_None;
         Py_INCREF(rv);
@@ -412,13 +432,13 @@ _est_doc_attr(PyObject *self, PyObject *args)
     const char *name, *attr;
     PyObject *rv;
 
-    if (!PyArg_ParseTuple(args, "s", &name))
+    if (!PyArg_ParseTuple(args, BYTES_FORMAT, &name))
         return NULL;
     null_check(pdoc->doc, "this is deleted document");
 
     attr = est_doc_attr(pdoc->doc, name);
     if (attr) {
-        rv = PyString_FromString(attr);
+        rv = PyBytes_FromString(attr);
     } else {
         rv = Py_None;
         Py_INCREF(rv);
@@ -455,8 +475,8 @@ _est_doc_cat_texts(PyObject *self, PyObject *args)
     debug("est_doc_cat_texts 1");
     debug(ret);
     null_check(ret, "cat_texts return NULL");
-    rv = PyString_FromString(ret);
-    debug("PyString_FromString 2");
+    rv = PyBytes_FromString(ret);
+    debug("PyBytes_FromString 2");
     free(ret);
     return rv;
 }
@@ -489,7 +509,7 @@ _est_doc_dump_draft(PyObject *self, PyObject *args)
     null_check(pdoc->doc, "this is deleted document");
 
     draft = est_doc_dump_draft(pdoc->doc);
-    rv = PyString_FromString(draft);
+    rv = PyBytes_FromString(draft);
     free(draft);
     return rv;
 }
@@ -510,7 +530,7 @@ _est_doc_make_snippet(PyObject *self, PyObject *args)
     cbl = list2CBLIST(words);
     null_check(cbl, NULL);
     snippet = est_doc_make_snippet(pdoc->doc, cbl, ww, hw, aw);
-    rv = PyString_FromString(snippet);
+    rv = PyBytes_FromString(snippet);
     free(snippet);
     return rv;
 }
@@ -536,8 +556,7 @@ static PyMethodDef PyESTDOC_methods[] = {
 static PyTypeObject PyESTDOC_Type = {
     /* The ob_type field must be initialized in the module init function
      * to be portable to Windows without using C++. */
-    PyObject_HEAD_INIT(NULL)
-    0,                                  /*ob_size*/
+    PyVarObject_HEAD_INIT(NULL, 0)
     "_estraiernative.PyESTDOC",		/*tp_name*/
     sizeof(PyESTDOC),                     /*tp_basicsize*/
     0,                            /*tp_itemsize*/
@@ -629,7 +648,7 @@ _est_err_msg(PyObject *self, PyObject *args)
         return NULL;
 
     strcpy(errmsg, est_err_msg(ecode)); // len(est_err_msg()) < BUFSIZ
-    rv = PyString_FromString(errmsg);
+    rv = PyBytes_FromString(errmsg);
 
     if (rv == NULL) {
         Py_INCREF(Py_None);
@@ -643,7 +662,7 @@ static PyObject*
 _est_db_open(PyObject *self, PyObject *args)
 {
     char *name;
-    int omode, ecp;
+    int omode;
     ESTMTDB *db;
     PyESTDB *pdb = (PyESTDB*)self;
 
@@ -671,7 +690,7 @@ static PyObject*
 _est_db_close(PyObject *self, PyObject *args)
 {
     PyESTDB *pdb = (PyESTDB*)self;
-    int ecp, ret;
+    int ret;
     PyObject *rv;
 
     null_check(pdb->db, "db is closed");
@@ -690,12 +709,11 @@ _est_db_close(PyObject *self, PyObject *args)
 static PyObject*
 _est_db_error(PyObject *self, PyObject *args)
 {
-    PyObject *po;
     PyESTDB *pdb = (PyESTDB*)self;
 
     //null_check(pdb->db, "db is closed");
     //pdb->ecode = est_mtdb_error(pdb->db);
-    return PyInt_FromLong(pdb->ecode);
+    return PYINT_FROMLONG(pdb->ecode);
 }
 
 static PyObject*
@@ -726,7 +744,7 @@ _est_db_add_attr_index(PyObject *self, PyObject *args)
     int type, ret;
     PyObject *rv;
 
-    if (!PyArg_ParseTuple(args, "si", &name, &type))
+    if (!PyArg_ParseTuple(args, BYTES_FORMAT "i", &name, &type))
         return NULL;
     null_check(pdb->db, "db is closed");
 
@@ -818,7 +836,7 @@ _est_db_merge(PyObject *self, PyObject *args)
     int opts, ret;
     PyObject *rv;
 
-    if (!PyArg_ParseTuple(args, "si", &name, &opts))
+    if (!PyArg_ParseTuple(args, BYTES_FORMAT "i", &name, &opts))
         return NULL;
     null_check(pdb->db, "db is closed");
 
@@ -940,14 +958,14 @@ _est_db_get_doc_attr(PyObject *self, PyObject *args)
     char *name, *attr;
     PyObject *rv;
 
-    if (!PyArg_ParseTuple(args, "is", &id, &name))
+    if (!PyArg_ParseTuple(args, "i" BYTES_FORMAT, &id, &name))
         return NULL;
 
     null_check(pdb->db, "db is closed");
 
     attr = est_mtdb_get_doc_attr(pdb->db, id, name);
     if (attr) {
-        rv = PyString_FromString(attr);
+        rv = PyBytes_FromString(attr);
         free(attr);
         return rv;
     } else {
@@ -964,7 +982,7 @@ _est_db_uri_to_id(PyObject *self, PyObject *args)
     char *uri;
     int id;
 
-    if(!PyArg_ParseTuple(args, "s", &uri))
+    if(!PyArg_ParseTuple(args, BYTES_FORMAT, &uri))
         return NULL;
 
     null_check(pdb->db, "db is closed");
@@ -973,7 +991,7 @@ _est_db_uri_to_id(PyObject *self, PyObject *args)
     if (id == -1) {
         pdb->ecode = est_mtdb_error(pdb->db);
     }
-    return PyInt_FromLong(id);
+    return PYINT_FROMLONG(id);
 }
 
 static PyObject*
@@ -985,7 +1003,7 @@ _est_db_name(PyObject *self, PyObject *args)
     null_check(pdb->db, "db is closed");
 
     name = est_mtdb_name(pdb->db);
-    return PyString_FromString(name);
+    return PyBytes_FromString(name);
 }
 
 static PyObject*
@@ -997,7 +1015,7 @@ _est_db_doc_num(PyObject *self, PyObject *args)
     null_check(pdb->db, "db is closed");
 
     docnum = est_mtdb_doc_num(pdb->db);
-    return PyInt_FromLong(docnum);
+    return PYINT_FROMLONG(docnum);
 }
 
 
@@ -1010,7 +1028,7 @@ _est_db_word_num(PyObject *self, PyObject *args)
     null_check(pdb->db, "db is closed");
 
     wordnum = est_mtdb_word_num(pdb->db);
-    return PyInt_FromLong(wordnum);
+    return PYINT_FROMLONG(wordnum);
 }
 
 
@@ -1032,8 +1050,7 @@ _est_db_search(PyObject *self, PyObject *args)
     PyESTDB *pdb = (PyESTDB*)self;
     PyESTCOND *pcond;
     PyESTRES *res;
-    int nump, *ret, i;
-    PyObject *hints, *list;
+    int nump, *ret;
     CBMAP *map;
 
     if (!PyArg_ParseTuple(args, "O!", &PyESTCOND_Type, &pcond))
@@ -1054,7 +1071,7 @@ _est_db_search(PyObject *self, PyObject *args)
     res->num = nump;
     res->hints = map;
     debug("_est_db_search() - ids, num, hints");
-    refcount(res, "db_search");
+    refcount((PyObject*)res, "db_search");
     return (PyObject*)res;
 }
 
@@ -1166,8 +1183,7 @@ static PyMethodDef PyESTDB_methods[] = {
 static PyTypeObject PyESTDB_Type = {
     /* The ob_type field must be initialized in the module init function
      * to be portable to Windows without using C++. */
-    PyObject_HEAD_INIT(NULL)
-    0,			/*ob_size*/
+    PyVarObject_HEAD_INIT(NULL, 0)
     "_estraiernative.PyESTDB",		/*tp_name*/
     sizeof(PyESTDB),	/*tp_basicsize*/
     0,			/*tp_itemsize*/
@@ -1260,7 +1276,7 @@ _est_cond_set_phrase(PyObject *self, PyObject *args)
     PyESTCOND *pcond = (PyESTCOND*)self;
     const char *phrase;
 
-    if (!PyArg_ParseTuple(args, "s", &phrase))
+    if (!PyArg_ParseTuple(args, BYTES_FORMAT, &phrase))
         return NULL;
 
     if (pcond->cond == NULL) {
@@ -1279,7 +1295,7 @@ _est_cond_add_attr(PyObject *self, PyObject *args)
     PyESTCOND *pcond = (PyESTCOND*)self;
     const char *expr;
 
-    if (!PyArg_ParseTuple(args, "s", &expr))
+    if (!PyArg_ParseTuple(args, BYTES_FORMAT, &expr))
         return NULL;
 
     null_check(pcond->cond, "this is deleted condition");
@@ -1295,7 +1311,7 @@ _est_cond_set_order(PyObject *self, PyObject *args)
     PyESTCOND *pcond = (PyESTCOND*)self;
     const char *expr;
 
-    if (!PyArg_ParseTuple(args, "s", &expr))
+    if (!PyArg_ParseTuple(args, BYTES_FORMAT, &expr))
         return NULL;
 
     null_check(pcond->cond, "this is deleted condition");
@@ -1392,7 +1408,7 @@ _est_cond_set_distinct(PyObject *self, PyObject *args)
     PyESTCOND *pcond = (PyESTCOND*)self;
     char *name;
 
-    if (!PyArg_ParseTuple(args, "s", &name))
+    if (!PyArg_ParseTuple(args, BYTES_FORMAT, &name))
         return NULL;
 
     null_check(pcond->cond, "this is deleted condition");
@@ -1437,7 +1453,7 @@ _est_cond_get_phrase(PyObject *self, PyObject *args)
 
     p = est_cond_phrase(pcond->cond);
     if (p) {
-      return PyString_FromString(p);
+      return PyBytes_FromString(p);
     } else {
       Py_INCREF(Py_None);
       return Py_None;
@@ -1449,7 +1465,6 @@ _est_cond_get_attrs(PyObject *self, PyObject *args)
 {
     PyESTCOND *pcond = (PyESTCOND*)self;
     const CBLIST *cbl;
-    PyObject *rv;
 
     null_check(pcond->cond, "this is deleted condition");
 
@@ -1473,7 +1488,7 @@ _est_cond_get_order(PyObject *self, PyObject *args)
 
     o = est_cond_order(pcond->cond);
     if (o) {
-      return PyString_FromString(o);
+      return PyBytes_FromString(o);
     } else {
       Py_INCREF(Py_None);
       return Py_None;
@@ -1489,7 +1504,7 @@ _est_cond_get_max(PyObject *self, PyObject *args)
     null_check(pcond->cond, "this is deleted condition");
 
     i = est_cond_max(pcond->cond);
-    return PyInt_FromLong(i);
+    return PYINT_FROMLONG(i);
 }
 
 static PyObject*
@@ -1501,7 +1516,7 @@ _est_cond_get_skip(PyObject *self, PyObject *args)
     null_check(pcond->cond, "this is deleted condition");
 
     i = est_cond_skip(pcond->cond);
-    return PyInt_FromLong(i);
+    return PYINT_FROMLONG(i);
 }
 
 static PyObject*
@@ -1513,7 +1528,7 @@ _est_cond_get_options(PyObject *self, PyObject *args)
     null_check(pcond->cond, "this is deleted condition");
 
     i = est_cond_options(pcond->cond);
-    return PyInt_FromLong(i);
+    return PYINT_FROMLONG(i);
 }
 
 
@@ -1526,7 +1541,7 @@ _est_cond_get_auxiliary(PyObject *self, PyObject *args)
     null_check(pcond->cond, "this is deleted condition");
 
     i = est_cond_auxiliary(pcond->cond);
-    return PyInt_FromLong(i);
+    return PYINT_FROMLONG(i);
 }
 
 
@@ -1539,7 +1554,7 @@ _est_cond_get_distinct(PyObject *self, PyObject *args)
     null_check(pcond->cond, "this is deleted condition");
     d = est_cond_distinct(pcond->cond);
     if (d) {
-      return PyString_FromString(d);
+      return PyBytes_FromString(d);
     } else {
       Py_INCREF(Py_None);
       return Py_None;
@@ -1555,7 +1570,7 @@ _est_cond_get_mask(PyObject *self, PyObject *args)
     null_check(pcond->cond, "this is deleted condition");
 
     i = est_cond_mask(pcond->cond);
-    return PyInt_FromLong(i);
+    return PYINT_FROMLONG(i);
 }
 
 static PyMethodDef PyESTCOND_methods[] = {
@@ -1585,8 +1600,7 @@ static PyMethodDef PyESTCOND_methods[] = {
 static PyTypeObject PyESTCOND_Type = {
     /* The ob_type field must be initialized in the module init function
      * to be portable to Windows without using C++. */
-    PyObject_HEAD_INIT(NULL)
-    0,			/*ob_size*/
+    PyVarObject_HEAD_INIT(NULL, 0)
     "_estraiernative.PyESTCOND",		/*tp_name*/
     sizeof(PyESTCOND),	/*tp_basicsize*/
     0,			/*tp_itemsize*/
@@ -1644,7 +1658,7 @@ estres_factory(void)
     res->num = 0;
     res->hints = NULL;
     debug("estres_factory");
-    refcount(res, "estres_factory");
+    refcount((PyObject*)res, "estres_factory");
     return res;
 }
 
@@ -1678,7 +1692,7 @@ _est_res_doc_num(PyObject *self, PyObject *args)
     PyESTRES* res = (PyESTRES*)self;
     assert(res != NULL);
     debug("doc_num");
-    return PyInt_FromLong(res->num);
+    return PYINT_FROMLONG(res->num);
 }
 
 static PyObject*
@@ -1695,7 +1709,7 @@ _est_res_get_doc_id(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    return PyInt_FromLong(res->ids[idx]);
+    return PYINT_FROMLONG(res->ids[idx]);
 }
 
 static PyObject*
@@ -1712,7 +1726,7 @@ _est_res_get_dbidx(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    return PyInt_FromLong(res->dbidxs[idx]);
+    return PYINT_FROMLONG(res->dbidxs[idx]);
 }
 static PyObject*
 _est_res_hint_words(PyObject *self, PyObject *args)
@@ -1747,33 +1761,28 @@ _est_res_hint(PyObject *self, PyObject *args)
     char *word;
     const char* vbuf;
 
-    if (!PyArg_ParseTuple(args, "s", word)) {
+    if (!PyArg_ParseTuple(args, BYTES_FORMAT, word)) {
         return NULL;
     }
     if (res->hints != NULL) {
-        return PyInt_FromLong(0);
+        return PYINT_FROMLONG(0);
     }
     vbuf = cbmapget(res->hints, word, -1, NULL);
     if (vbuf == NULL) {
-        return PyInt_FromLong(0);
+        return PYINT_FROMLONG(0);
     }
-    return PyInt_FromLong(atoi(vbuf));
+    return PYINT_FROMLONG(atoi(vbuf));
 }
 
 static PyObject*
 _est_res_get_score(PyObject *self, PyObject *args)
 {
-    PyESTRES* res = (PyESTRES*)self;
-    int idx;
-
     PyErr_SetString(PyExc_NotImplementedError, "_est_cond_set_mask");
     return NULL;
 }
 static PyObject*
 _est_res_get_shadows(PyObject *self, PyObject *args)
 {
-    PyESTRES* res = (PyESTRES*)self;
-
     PyErr_SetString(PyExc_NotImplementedError, "_est_cond_set_mask");
     return NULL;
 }
@@ -1793,8 +1802,7 @@ static PyMethodDef PyESTRES_methods[] = {
 static PyTypeObject PyESTRES_Type = {
     /* The ob_type field must be initialized in the module init function
      * to be portable to Windows without using C++. */
-    PyObject_HEAD_INIT(NULL)
-    0,			/*ob_size*/
+    PyVarObject_HEAD_INIT(NULL, 0)
     "_estraiernative.PyESTRES",		/*tp_name*/
     sizeof(PyESTRES),	/*tp_basicsize*/
     0,			/*tp_itemsize*/
@@ -1847,25 +1855,27 @@ PyDoc_STRVAR(module_doc,
 
 /* Initialization function for the module (*must* be called initxx) */
 
-PyMODINIT_FUNC
-init_estraiernative(void)
+MOD_INIT(_estraiernative)
 {
     PyObject *m;
     PyObject *d;
 
     if (PyType_Ready(&PyESTDOC_Type) < 0)
-        return;
+        return MOD_ERROR_VAL;
 
     if (PyType_Ready(&PyESTCOND_Type) < 0)
-        return;
+        return MOD_ERROR_VAL;
 
     if (PyType_Ready(&PyESTDB_Type) < 0)
-        return;
+        return MOD_ERROR_VAL;
 
     if (PyType_Ready(&PyESTRES_Type) < 0)
-        return;
+        return MOD_ERROR_VAL;
 
-    m = Py_InitModule3("_estraiernative", hyperest_methods, module_doc);
+    MOD_DEF(m, "_estraiernative", module_doc, hyperest_methods);
+
+    if (m == NULL)
+        return MOD_ERROR_VAL;
 
     // Document
     Py_INCREF(&PyESTDOC_Type);
@@ -1934,10 +1944,12 @@ init_estraiernative(void)
     /* Add some symbolic constants to the module */
     EST_Error = PyErr_NewException("_estraiernative.Error", NULL, NULL);
     if (EST_Error == NULL)
-        return;
+        return MOD_ERROR_VAL;
     PyModule_AddObject(m, "EstError", EST_Error);
 
     debug("init_estraeirnative fin.");
+
+    return MOD_SUCCESS_VAL(m);
 }
 
 
