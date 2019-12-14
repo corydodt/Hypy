@@ -4,7 +4,7 @@ from inspect import cleandoc
 from setuptools import setup, Extension
 
 
-__version__ = '0.8.8'
+__version__ = '1.0.0'
 
 
 ext = Extension("_estraiernative",
@@ -20,12 +20,12 @@ setup(
     author_email='usk@nrgate.jp',
     maintainer='Cory Dodt',
     maintainer_email='pypi@spam.goonmill.org',
-    url='http://goonmill.org/hypy/',
-    download_url='http://hypy-source.goonmill.org/archive/tip.tar.gz',
+    url='https://github.com/corydodt/Hypy',
+    download_url='https://github.com/corydodt/Hypy/archive/release-%s.tar.gz' % __version__,
     version=__version__,
     ext_modules=[ext],
     zip_safe=False,
-    packages=['hypy'],
+    packages=['src/hypy'],
 
     classifiers=[
       'Development Status :: 4 - Beta',
