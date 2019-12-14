@@ -16,7 +16,7 @@ You will need to (a) install Hyper Estraier, then (b) install Hypy.
 
 #### Installing Hyper Estraier from Source
 
-Instructions for building and [installing Hyper Estraier](http://hyperestraier.sourceforge.net/intro-en.html#installation) can be found on
+Instructions for building and [installing Hyper Estraier](https://fallabs.com/hyperestraier/) can be found on
 that site.  It is a standard configure/make/make install process, but you must
 make sure to download all the required files.  See the Hyper Estraier
 installation page for details.
@@ -135,11 +135,13 @@ estraiernative (c) Yusuke Yoshida.
 
 ## Change Log
 
-### [TBA] - TBA
+### [1.0.0] - 2019-12-13
 
 #### Added:
 
 - (#5) Python 3 support!
+
+  Automatic builds will test with Python 3.7 for now.
 
 
 ### [0.8.8] - 2019-08-07
@@ -203,6 +205,7 @@ estraiernative (c) Yusuke Yoshida.
 #### Added:
   - Initial Public Opensourcing.
 
+[1.0.0]: https://github.com/corydodt/Hypy/compare/release-0.8.8...release-1.0.0
 [0.8.8]: https://github.com/corydodt/Hypy/compare/release-0.8.7...release-0.8.8
 [0.8.7]: https://github.com/corydodt/Hypy/compare/0.8.5.1...release-0.8.7
 [0.8.5.1]: https://github.com/corydodt/Hypy/compare/0.8.5...0.8.5.1
