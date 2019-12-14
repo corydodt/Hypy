@@ -8,6 +8,8 @@ import unittest
 import os
 from contextlib import contextmanager
 
+from six import text_type
+
 from hypy import (HDocument, HDatabase, HCondition, OpenFailed,
         PutFailed, CloseFailed, FlushFailed, EditFailed)
 
@@ -29,14 +31,14 @@ class TestHDocument(unittest.TestCase):
         doc = self.doc
 
         # byte strings, other types are not allowed.
-        self.assertRaises(TypeError, doc.__setitem__, 'foobar', 'baz')
-        self.assertRaises(TypeError, doc.__setitem__, 'foobar', 1)
+        self.assertRaises(TypeError, doc.__setitem__, b'foobar', b'baz')
+        self.assertRaises(TypeError, doc.__setitem__, b'foobar', 1)
 
         doc[u'foobar'] = u'baz'
         doc[u'foobar']
         self.assertEqual(doc[u'foobar'], u'baz')
-        self.assertEqual(doc.get(u'foobar', 'default'), u'baz')
-        self.assertEqual(doc.get(u'xyz', 'default'), 'default')
+        self.assertEqual(doc.get(u'foobar', b'default'), u'baz')
+        self.assertEqual(doc.get(u'xyz', b'default'), b'default')
         self.assertEqual(doc.get(u'xyz'), None)
 
         newattrs = {u'new1': u'lala', u'foobar': u'bazz'}
@@ -55,12 +57,12 @@ class TestHDocument(unittest.TestCase):
         Mess with document text
         """
         doc = self.doc
-        self.assertRaises(TypeError, doc.addText, 'xyz')
+        self.assertRaises(TypeError, doc.addText, b'xyz')
         doc.addText(u'xyz')
         self.assertEqual([u'xyz'], doc.getTexts())
         doc.addText(u'123')
         self.assertEqual([u'xyz', u'123'], doc.getTexts())
-        self.assertRaises(TypeError, doc.addHiddenText, 'abc')
+        self.assertRaises(TypeError, doc.addHiddenText, b'abc')
         doc.addHiddenText(u'abc')
         self.assertEqual([u'xyz', u'123'], doc.getTexts())
 
@@ -68,13 +70,13 @@ class TestHDocument(unittest.TestCase):
 
         doc.addText(u'\u062b')
 
-        self.assertEqual('xyz123\xd8\xab', doc.encode('utf-8'))
+        self.assertEqual(b'xyz123\xd8\xab', doc.encode('utf8'))
 
     def test_unicodeType(self):
         """
         Almost everything in hypy must be unicode
         """
-        self.assertRaises(TypeError, HDocument, uri='notunicode')
+        self.assertRaises(TypeError, HDocument, uri=b'notunicode')
 
 
 class TestDatabase(unittest.TestCase):
@@ -105,11 +107,11 @@ class TestDatabase(unittest.TestCase):
         db.putDoc(doc)
 
         for x in range(4, extras+4):
-            doc = HDocument(uri=unicode(x))
+            doc = HDocument(uri=text_type(x))
             doc.addText(u'filler filler filler carrot top')
             # set some attributes for attribute operator testing
-            doc[u'specialId'] = unicode(x)
-            doc[u'description'] = unicode(x) * x
+            doc[u'specialId'] = text_type(x)
+            doc[u'description'] = text_type(x) * x
             doc[u'date'] = u'2008-12-%s' % (x,)
             db.putDoc(doc)
 
@@ -177,7 +179,7 @@ class TestDatabase(unittest.TestCase):
             # already removed?
             self.assertRaises(EditFailed, db.remove, id=doc3id)
 
-            self.assertRaises(KeyError, db.__getitem__, '1')
+            self.assertRaises(KeyError, db.__getitem__, b'1')
 
             # fetch a document from the database, edit it, store it, compare
             # it with the original (unfetched) document.  Verify that they are
@@ -294,7 +296,7 @@ class TestDatabase(unittest.TestCase):
 
             # attribute conditions
             cc = HCondition(u'*.**')
-            self.assertRaises(TypeError, cc.addAttr, 'xxx')
+            self.assertRaises(TypeError, cc.addAttr, b'xxx')
 
             # None as a kwarg should work (bug #356253)
             HCondition(phrase=None)
@@ -306,7 +308,7 @@ class TestDatabase(unittest.TestCase):
                     cond = HCondition()
                 cond.addAttr(expr)
                 if order:
-                    self.assertRaises(TypeError, cond.setOrder, '*.**')
+                    self.assertRaises(TypeError, cond.setOrder, b'*.**')
                     cond.setOrder(order)
                 return db.search(cond)
             result = attrSearch(u'description STREQ 4444')
@@ -412,7 +414,6 @@ class TestDatabase(unittest.TestCase):
 '@digest=17de33c57e358f0fc5d57cd26a08b48e\n@id=1\n@uri=1\n\nword this is my document. do you like documents? this one is hi-res.\n')
                 self.assertEqual(hit.teaser([u'document']), u'word this is my <strong>document</strong>. do you li ... ke <strong>document</strong>s? this one is hi-re ... ')
                 self.assertEqual(hit.teaser([u'document'], 'rst'), u'word this is my **document**. do you li ... ke **document**s? this one is hi-re ... ')
-                self.assertRaises(TypeError, hit.teaser, ['document'])
                 self.assertRaises(NotImplementedError, hit.teaser,
                         [u'document'], 'pdf')
 

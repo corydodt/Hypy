@@ -42,10 +42,11 @@ tox
 - Add and push a tag for the new release
 
 ```
-$ python setup.py sdist bdist_wheel
+$ python setup.py sdist bdist_wheel && python3 setup.py bdist_wheel
 $ twine upload dist/*
 ```
 
+For point releases: Make sure there is a series-0.x branch in github, and branch from that branch.
 
 ### Quick Start
 
@@ -134,6 +135,13 @@ estraiernative (c) Yusuke Yoshida.
 
 ## Change Log
 
+### [TBA] - TBA
+
+#### Added:
+
+- (#5) Python 3 support!
+
+
 ### [0.8.8] - 2019-08-07
 
 #### Fixed:
@@ -195,11 +203,11 @@ estraiernative (c) Yusuke Yoshida.
 #### Added:
   - Initial Public Opensourcing.
 
-[0.8.1]: https://github.com/corydodt/Hypy/tree/0.8.1
-[0.8.2]: https://github.com/corydodt/Hypy/compare/0.8.1...0.8.2
-[0.8.3]: https://github.com/corydodt/Hypy/compare/0.8.2...0.8.3
-[0.8.4]: https://github.com/corydodt/Hypy/compare/0.8.3...0.8.4
-[0.8.5]: https://github.com/corydodt/Hypy/compare/0.8.4...0.8.5
-[0.8.5.1]: https://github.com/corydodt/Hypy/compare/0.8.5...0.8.5.1
-[0.8.7]: https://github.com/corydodt/Hypy/compare/0.8.5.1...release-0.8.7
 [0.8.8]: https://github.com/corydodt/Hypy/compare/release-0.8.7...release-0.8.8
+[0.8.7]: https://github.com/corydodt/Hypy/compare/0.8.5.1...release-0.8.7
+[0.8.5.1]: https://github.com/corydodt/Hypy/compare/0.8.5...0.8.5.1
+[0.8.5]: https://github.com/corydodt/Hypy/compare/0.8.4...0.8.5
+[0.8.4]: https://github.com/corydodt/Hypy/compare/0.8.3...0.8.4
+[0.8.3]: https://github.com/corydodt/Hypy/compare/0.8.2...0.8.3
+[0.8.2]: https://github.com/corydodt/Hypy/compare/0.8.1...0.8.2
+[0.8.1]: https://github.com/corydodt/Hypy/tree/0.8.1

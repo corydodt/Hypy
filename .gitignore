@@ -105,3 +105,5 @@ _temp_db
 
 Library/
 .vscode/
+
+/hyperestraier-1.*
