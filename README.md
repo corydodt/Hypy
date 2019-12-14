@@ -135,7 +135,7 @@ estraiernative (c) Yusuke Yoshida.
 
 ## Change Log
 
-### [1.0.0] - 2019-12-13
+### [1.0.1] - 2019-12-13
 
 #### Added:
 
@@ -205,7 +205,7 @@ estraiernative (c) Yusuke Yoshida.
 #### Added:
   - Initial Public Opensourcing.
 
-[1.0.0]: https://github.com/corydodt/Hypy/compare/release-0.8.8...release-1.0.0
+[1.0.1]: https://github.com/corydodt/Hypy/compare/release-0.8.8...release-1.0.1
 [0.8.8]: https://github.com/corydodt/Hypy/compare/release-0.8.7...release-0.8.8
 [0.8.7]: https://github.com/corydodt/Hypy/compare/0.8.5.1...release-0.8.7
 [0.8.5.1]: https://github.com/corydodt/Hypy/compare/0.8.5...0.8.5.1

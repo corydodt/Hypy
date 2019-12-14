@@ -4,7 +4,7 @@ from inspect import cleandoc
 from setuptools import setup, Extension
 
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 
 ext = Extension("_estraiernative",
@@ -25,7 +25,8 @@ setup(
     version=__version__,
     ext_modules=[ext],
     zip_safe=False,
-    packages=['src/hypy'],
+    packages=['hypy'],
+    package_dir={'': 'src/'},
 
     classifiers=[
       'Development Status :: 4 - Beta',
