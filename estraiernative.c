@@ -1851,7 +1851,7 @@ static PyMethodDef hyperest_methods[] = {
 };
 
 PyDoc_STRVAR(module_doc,
-"This is a template module just for instruction.");
+"Python bindings for Hyper Estraier, a fulltext search indexer.");
 
 /* Initialization function for the module (*must* be called initxx) */
 
